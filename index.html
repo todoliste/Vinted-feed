@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinted Feed Demo</title>
+<style>
+/* Reset & base */
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    transition: background 0.3s, color 0.3s;
+}
+.dark-mode {
+    background: #121212;
+    color: #eee;
+}
+
+/* Card feed */
+.card {
+    width:90%;
+    max-width:400px;
+    background:#fff;
+    border-radius:12px;
+    padding:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    transition: background 0.3s, color 0.3s;
+}
+.dark-mode .card {
+    background:#1e1e1e;
+    color:#eee;
+}
+.card img {
+    width:100%;
+    border-radius:12px;
+}
+.brand { font-weight:bold; margin-top:8px; }
+.price, .size { margin-top:4px; }
+.link {
+    margin-top:8px;
+    text-decoration:none;
+    color:#2f80ed;
+    font-weight:bold;
+}
+
+/* Discord logo button */
+#discord-btn {
+    position:fixed;
+    top:20px;
+    right:20px;
+    width:40px;
+    height:40px;
+    cursor:pointer;
+    z-index:1000;
+}
+#discord-btn img {
+    width:100%;
+    height:100%;
+}
+
+/* Panneau paramètres */
+#settings-panel {
+    position:fixed;
+    top:60px;
+    right:20px;
+    width:250px;
+    background:#fff;
+    border-radius:12px;
+    padding:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    display:none;
+    flex-direction:column;
+}
+.dark-mode #settings-panel { background:#1e1e1e; color:#eee; }
+#settings-panel label { margin-top:8px; display:block; }
+#settings-panel input[type="checkbox"] { margin-right:6px; }
+</style>
+</head>
+<body>
+
+<!-- Discord button -->
+<div id="discord-btn">
+    <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord">
+</div>
+
+<!-- Settings panel -->
+<div id="settings-panel">
+    <label><input type="checkbox" id="toggle-theme"> Dark Mode</label>
+    <label>Marques favorites :</label>
+    <select id="favorite-brand" style="width:100%;margin-top:4px;">
+        <option>Dior</option>
+        <option>Gucci</option>
+        <option>Chanel</option>
+        <option>Louis Vuitton</option>
+        <option>Balenciaga</option>
+        <option>Prada</option>
+        <option>Nike</option>
+        <option>Adidas</option>
+        <option>Supreme</option>
+        <option>Hermes</option>
+    </select>
+</div>
+
+<!-- Feed card -->
+<div class="card" id="card">Chargement...</div>
+
+<script>
+// Articles mock
+const articles = [
+    {title:"Veste Dior", price:"150€", size:"M", image:"https://via.placeholder.com/400x400.png?text=Dior+Veste", link:"#"},
+    {title:"Chaussures Gucci", price:"120€", size:"42", image:"https://via.placeholder.com/400x400.png?text=Gucci+Chaussures", link:"#"},
+    {title:"Sac Chanel", price:"200€", size:"-", image:"https://via.placeholder.com/400x400.png?text=Chanel+Sac", link:"#"},
+    {title:"T-shirt Nike", price:"30€", size:"L", image:"https://via.placeholder.com/400x400.png?text=Nike+T-shirt", link:"#"},
+    {title:"Pull Balenciaga", price:"90€", size:"M", image:"https://via.placeholder.com/400x400.png?text=Balenciaga+Pull", link:"#"},
+    {title:"Jean Prada", price:"70€", size:"32", image:"https://via.placeholder.com/400x400.png?text=Prada+Jean", link:"#"},
+    {title:"Sac Hermes", price:"250€", size:"-", image:"https://via.placeholder.com/400x400.png?text=Hermes+Sac", link:"#"},
+    {title:"Casquette Supreme", price:"35€", size:"Unique", image:"https://via.placeholder.com/400x400.png?text=Supreme+Casquette", link:"#"}
+];
+
+let index = 0;
+
+// Afficher article
+function showArticle(){
+    const a = articles[index];
+    document.getElementById('card').innerHTML = `
+        <img src="${a.image}" alt="${a.title}">
+        <div class="brand">${a.title}</div>
+        <div class="price">Prix: ${a.price}</div>
+        <div class="size">Taille: ${a.size}</div>
+        <a class="link" href="${a.link}" target="_blank">Voir sur Vinted</a>
+    `;
+    index = (index+1) % articles.length;
+}
+
+// Timer 30s
+showArticle();
+setInterval(showArticle, 30000);
+
+// Discord button toggle settings panel
+const discordBtn = document.getElementById('discord-btn');
+const settingsPanel = document.getElementById('settings-panel');
+discordBtn.addEventListener('click', ()=> {
+    if(settingsPanel.style.display==='flex') settingsPanel.style.display='none';
+    else settingsPanel.style.display='flex';
+});
+
+// Dark mode toggle
+const toggleTheme = document.getElementById('toggle-theme');
+toggleTheme.addEventListener('change', ()=> {
+    document.body.classList.toggle('dark-mode');
+});
+</script>
+
+</body>
+</html>
