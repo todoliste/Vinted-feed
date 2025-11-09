@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vinted Feed Demo</title>
+<title>Vinted Feed Demo VIP</title>
 <style>
 body {
     margin:0;
@@ -27,6 +27,7 @@ body {
 #settings-panel input[type="checkbox"] { margin-right:6px; }
 #settings-panel input, #settings-panel select { width:100%; margin-top:4px; padding:4px; border-radius:4px; border:1px solid #ccc; }
 .dark-mode #settings-panel input, .dark-mode #settings-panel select { background:#2a2a2a; border:1px solid #555; color:#eee; }
+#vip-message { margin-top:10px; color:red; font-weight:bold; text-align:center; }
 </style>
 </head>
 <body>
@@ -47,8 +48,7 @@ body {
     <label>Âge :</label>
     <input type="number" id="user-age" min="10" max="99" value="18">
     <button id="discord-connect" style="margin-top:10px; padding:6px; font-weight:bold;">Se connecter à Discord</button>
-    <label>Timer feed (sec) :</label>
-    <input type="number" id="timer" min="5" value="30">
+    <div id="vip-message">Le timer automatique est réservé aux membres VIP (4,99€/mois)</div>
 </div>
 
 <div class="container" id="feed-container">
@@ -56,22 +56,18 @@ body {
 </div>
 
 <script>
-// Articles mock
+// Articles mock avec ton image
 const articles = [
-    {title:"Veste Dior", price:"150€", size:"M", image:"https://via.placeholder.com/400x400.png?text=Veste+Dior", link:"#"},
-    {title:"Chaussures Gucci", price:"120€", size:"42", image:"https://via.placeholder.com/400x400.png?text=Chaussures+Gucci", link:"#"},
-    {title:"Sac Chanel", price:"200€", size:"-", image:"https://via.placeholder.com/400x400.png?text=Sac+Chanel", link:"#"},
-    {title:"T-shirt Nike", price:"30€", size:"L", image:"https://via.placeholder.com/400x400.png?text=T-shirt+Nike", link:"#"},
-    {title:"Pull Balenciaga", price:"90€", size:"M", image:"https://via.placeholder.com/400x400.png?text=Pull+Balenciaga", link:"#"},
-    {title:"Jean Prada", price:"70€", size:"32", image:"https://via.placeholder.com/400x400.png?text=Jean+Prada", link:"#"},
-    {title:"Sac Hermes", price:"250€", size:"-", image:"https://via.placeholder.com/400x400.png?text=Sac+Hermes", link:"#"},
-    {title:"Casquette Supreme", price:"35€", size:"Unique", image:"https://via.placeholder.com/400x400.png?text=Casquette+Supreme", link:"#"},
-    {title:"Pantalon Cool", price:"50€", size:"L", image:"https://via.placeholder.com/400x400.png?text=Pantalon+Exemple", link:"#"}
+    {title:"Exemple Vêtement 1", price:"50€", size:"L", image:"https://i.imgur.com/8JYxM0y.png", link:"#"},
+    {title:"Exemple Vêtement 2", price:"70€", size:"M", image:"https://via.placeholder.com/400x400.png?text=Veste+2", link:"#"},
+    {title:"Exemple Vêtement 3", price:"30€", size:"S", image:"https://via.placeholder.com/400x400.png?text=T-shirt+3", link:"#"},
+    {title:"Exemple Vêtement 4", price:"90€", size:"XL", image:"https://via.placeholder.com/400x400.png?text=Jean+4", link:"#"},
+    {title:"Exemple Vêtement 5", price:"120€", size:"M", image:"https://via.placeholder.com/400x400.png?text=Chaussures+5", link:"#"}
 ];
 
 let pageIndex = 0;
 
-// Afficher 3 annonces par “page”
+// Afficher 3 annonces par page
 function showPage(){
     const container = document.getElementById('feed-container');
     container.innerHTML = '';
@@ -93,8 +89,10 @@ function showPage(){
 
 // Initial display
 showPage();
-let timerValue = document.getElementById('timer').value;
-let feedInterval = setInterval(showPage, timerValue*1000);
+
+// Timer automatique réservé VIP → ici on ne l’active pas pour non-VIP
+// clearInterval si tu veux simuler le feed VIP
+// let feedInterval = setInterval(showPage, 30000);
 
 // Discord button toggle
 const discordBtn = document.getElementById('discord-btn');
@@ -107,13 +105,6 @@ discordBtn.addEventListener('click', ()=> {
 // Dark mode toggle
 const toggleTheme = document.getElementById('toggle-theme');
 toggleTheme.addEventListener('change', ()=> { document.body.classList.toggle('dark-mode'); });
-
-// Timer change
-const timerInput = document.getElementById('timer');
-timerInput.addEventListener('change', ()=> {
-    clearInterval(feedInterval);
-    feedInterval = setInterval(showPage, timerInput.value*1000);
-});
 
 // Discord connect (mock)
 document.getElementById('discord-connect').addEventListener('click', ()=> {
