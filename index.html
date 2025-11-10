@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vinted Feed - VIP Demo</title>
+<title>Vin+</title>
 <style>
 body {
   margin: 0;
@@ -24,17 +24,20 @@ header {
   width: 100%;
   height: 60px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   padding: 0 16px;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.9);
   backdrop-filter: blur(8px);
   box-shadow: 0 1px 5px rgba(0,0,0,0.05);
   z-index: 100;
 }
-.dark-mode header { background: rgba(25,25,25,0.8); }
+.dark-mode header { background: rgba(25,25,25,0.9); }
 
-.logo { display: flex; align-items: center; font-weight: 600; font-size: 1rem; gap: 8px; cursor:pointer; }
+#settings-toggle {
+  cursor:pointer;
+  font-size: 1.5rem;
+}
 
 #settings {
   position: fixed;
@@ -66,6 +69,7 @@ main {
   flex-direction:column;
   align-items:center;
 }
+
 .card {
   display:flex;
   flex-direction:column;
@@ -89,12 +93,13 @@ main {
   justify-content:center;
   gap:10px;
   margin-top:12px;
-  flex-wrap: wrap;
+  flex-wrap:wrap;
 }
 button { cursor:pointer; padding:10px 20px; border:none; border-radius:10px; font-weight:600; transition:0.2s; }
 button:hover { opacity:0.9; transform:scale(1.03); }
 #skip-btn { background:#666; color:#fff; }
 #favorite-btn { background:#e74c3c; color:#fff; }
+#vinted-btn { background:#27ae60; color:#fff; }
 
 .popup {
   position:fixed;
@@ -137,7 +142,7 @@ button:hover { opacity:0.9; transform:scale(1.03); }
   .card { flex-direction:column; height:auto; }
   .card img { width:100%; height:auto; }
   .card .info { width:100%; padding:12px; }
-  .btns { flex-direction:column; }
+  .btns { flex-direction:row; justify-content:center; }
   #settings { width:90%; top:70px; right:5%; }
 }
 </style>
@@ -145,7 +150,7 @@ button:hover { opacity:0.9; transform:scale(1.03); }
 <body>
 
 <header>
-  <div class="logo" id="discord-logo">🎯 Vinted Feed</div>
+  <div id="settings-toggle">⚙️</div>
 </header>
 
 <div id="settings">
@@ -189,10 +194,10 @@ button:hover { opacity:0.9; transform:scale(1.03); }
   </div>
 </main>
 
-<div id="vip-popup" class="popup"><span class="popup-close">✖</span></div>
-<div id="history-popup" class="popup"><span class="popup-close">✖</span></div>
-<div id="favorites-popup" class="popup"><span class="popup-close">✖</span></div>
-<div id="best-popup" class="popup"><span class="popup-close">✖</span></div>
+<div id="vip-popup" class="popup"></div>
+<div id="history-popup" class="popup"></div>
+<div id="favorites-popup" class="popup"></div>
+<div id="best-popup" class="popup"></div>
 
 <script>
 const items=[
@@ -200,13 +205,13 @@ const items=[
 {title:"T-shirt Dior logo",brand:"Dior",size:"L",condition:"Neuf",price:"90€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
 {title:"Jean Levi's 501",brand:"Levi's",size:"42",condition:"Bon état",price:"55€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
 {title:"Veste Zara beige",brand:"Zara",size:"S",condition:"Très bon état",price:"35€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+// Ajoute ici tes 20+ articles avec emojis
 ];
 
 let index=0, isVIP=false, history=[], favorites=[], notifBest=false, bestArticles=[], favBrands=[];
 
 function showItem(){
   const item = items[index];
-  // Filtre marques favorites VIP
   if(isVIP && favBrands.length>0 && !favBrands.includes(item.brand)){
     index=(index+1)%items.length;
     showItem();
@@ -222,10 +227,9 @@ function showItem(){
   document.getElementById("favorite-btn").style.display=isVIP?"inline-block":"none";
 }
 
-showItem();
-
 function updateBestButton(){
   const bestBtn = document.getElementById("best-btn");
+  bestBtn.style.display = isVIP ? "block" : "none";
   bestBtn.textContent = bestArticles.length>0 ? "❗ Meilleurs articles" : "☹ Meilleurs articles";
 }
 
@@ -235,7 +239,6 @@ function addBest(item){
 }
 
 const card = document.getElementById("card");
-
 function skipItem(){
   card.classList.add("slide-left");
   setTimeout(()=>{
@@ -250,17 +253,17 @@ function skipItem(){
 }
 
 document.getElementById("skip-btn").addEventListener("click",skipItem);
-
 document.getElementById("favorite-btn").addEventListener("click",()=>{
   const item=items[index];
-  if(!favorites.includes(item))favorites.push(item);
+  if(isVIP && !favorites.includes(item))favorites.push(item);
   updateBestButton();
 });
 
-document.getElementById("discord-logo").addEventListener("click",()=>{
+document.getElementById("settings-toggle").addEventListener("click",()=>{
   const settings=document.getElementById("settings");
   settings.style.display=(settings.style.display==="block"?"none":"block");
 });
+
 document.getElementById("darkToggle").addEventListener("change",()=>{document.body.classList.toggle("dark-mode");});
 
 const vipBtn=document.getElementById("vip-btn");
@@ -277,7 +280,7 @@ const bestBtn=document.getElementById("best-btn");
 const bestPopup=document.getElementById("best-popup");
 
 vipBtn.addEventListener("click",()=>{
-  vipPopup.innerHTML='✖<span class="popup-close">✖</span><h4>💎 Devenir VIP - 4,99€/mois</h4><ul><li>0 Delay ⚡</li><li>Notifications meilleurs articles 🔔</li><li>Historique complet 🕘</li><li>Favoris sur les articles ❤️</li><li>Marques préférées filtrables 💖</li></ul><button id="pay-vip">Payer VIP</button>';
+  vipPopup.innerHTML='<span class="popup-close">✖</span><h4>💎 Devenir VIP - 4,99€/mois</h4><ul><li>0 Delay ⚡</li><li>Notifications meilleurs articles 🔔</li><li>Historique complet 🕘</li><li>Favoris sur les articles ❤️</li><li>Marques préférées filtrables 💖</li></ul><button id="pay-vip">Payer VIP</button>';
   vipPopup.style.display="block";
   vipPopup.querySelector(".popup-close").onclick=()=>vipPopup.style.display="none";
   document.getElementById("pay-vip").onclick=()=>{
@@ -287,8 +290,9 @@ vipBtn.addEventListener("click",()=>{
     document.getElementById("favorite-btn").style.display="inline-block";
     favoritesView.style.display="block";
     historyView.style.display="block";
-    notifLabel.style.display="block"; 
-    favBrandsDiv.style.display="block"; 
+    notifLabel.style.display="block";
+    favBrandsDiv.style.display="block";
+    updateBestButton();
   }
 });
 
@@ -300,6 +304,7 @@ brandChecks.forEach(cb=>{
 });
 
 favoritesView.addEventListener("click",()=>{
+  if(!isVIP) return;
   favoritesPopup.innerHTML='<span class="popup-close">✖</span><h4>❤️ Favoris</h4><div class="item-list"></div><button id="fav-clear">Tout supprimer</button>';
   const list=favoritesPopup.querySelector(".item-list");
   favorites.forEach((it,i)=>{
@@ -314,6 +319,7 @@ favoritesView.addEventListener("click",()=>{
 });
 
 historyView.addEventListener("click",()=>{
+  if(!isVIP) return;
   historyPopup.innerHTML='<span class="popup-close">✖</span><h4>🕘 Historique</h4><div class="item-list"></div><button id="hist-clear">Tout supprimer</button>';
   const list=historyPopup.querySelector(".item-list");
   history.forEach((it,i)=>{
@@ -330,7 +336,7 @@ historyView.addEventListener("click",()=>{
 notifCheckbox.addEventListener("change",()=>{notifBest=notifCheckbox.checked;});
 
 bestBtn.addEventListener("click", ()=>{
-  if(bestArticles.length===0){
+  if(!isVIP || bestArticles.length===0){
     alert("😔 Pas de meilleurs articles rentables");
     return;
   }
@@ -345,8 +351,8 @@ bestBtn.addEventListener("click", ()=>{
   bestPopup.querySelector(".popup-close").onclick = ()=>bestPopup.style.display="none";
 });
 
+showItem();
 updateBestButton();
 </script>
-
 </body>
 </html>
