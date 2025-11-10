@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vinted Feed — Connexion</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+<main class="center">
+  <div class="card auth-card">
+    <img src="assets/logo-clothes.svg" class="brand-logo" alt="logo">
+    <h1>Vinted Feed</h1>
+    <p class="muted">Découvre les meilleures annonces — connexion Discord requise</p>
+    <a id="connectBtn" class="btn discord">Se connecter avec Discord</a>
+    <p class="muted small">Connexion simulée pour la démo — pas d'auth réelle.</p>
+  </div>
+</main>
+<script>
+document.getElementById('connectBtn').addEventListener('click', ()=>{
+  location.href = 'feed.html';
+});
+</script>
+</body>
+</html>

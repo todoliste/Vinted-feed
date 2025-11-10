@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vinted Feed — Feed</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+<header class="topbar">
+  <div class="left">
+    <img src="assets/logo-clothes.svg" class="logo-small" alt="logo">
+    <span class="appname">Vinted Feed</span>
+  </div>
+  <div class="right">
+    <img id="discordAvatar" src="assets/discord-avatar.svg" class="avatar" alt="discord">
+  </div>
+</header>
+
+<main class="center">
+  <div id="cardWrap" class="card card-large">
+    <div id="card" class="draggable">
+      <img id="itemImg" src="" alt="item">
+      <div class="info">
+        <h2 id="itemTitle"></h2>
+        <p id="itemBrand" class="muted"></p>
+        <p id="itemSize" class="muted"></p>
+        <p id="itemCondition" class="muted"></p>
+        <div class="price" id="itemPrice"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="skipBtn" class="btn ghost">⏭ Skip</button>
+      <button id="openBtn" class="btn primary">Voir sur Vinted</button>
+    </div>
+  </div>
+</main>
+
+<div id="settings" class="modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <img src="assets/discord-avatar.svg" class="avatar-large" alt="pp">
+      <div>
+        <div id="discordName" class="muted">DiscordUser#1234</div>
+        <div class="small muted">Connecté via Discord (simulé)</div>
+      </div>
+    </div>
+    <hr/>
+    <label class="row"><input type="checkbox" id="themeToggle"> Mode sombre</label>
+    <label class="row">Timer automatique (VIP)<br/><small class="muted">Réservé aux membres VIP</small></label>
+    <div class="row">
+      <button id="buyVip" class="btn vip">Devenir VIP — 4,99€/mois</button>
+    </div>
+    <div class="row">
+      <button id="closeSettings" class="btn ghost">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div id="purchase" class="modal small">
+  <div class="modal-card">
+    <h3>Accès VIP</h3>
+    <p>Abonnement simulé — 4,99€/mois. (démo)</p>
+    <div class="row">
+      <button id="confirmBuy" class="btn primary">Payer 4,99€</button>
+      <button id="cancelBuy" class="btn ghost">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
