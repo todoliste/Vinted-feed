@@ -3,114 +3,205 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vinted Feed Demo VIP</title>
+<title>Vinted Feed Demo</title>
 <style>
 body {
-    margin:0;
-    font-family: Arial, sans-serif;
-    background:#f0f0f0;
-    transition: background 0.3s, color 0.3s;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  transition: background 0.4s, color 0.4s;
 }
-.dark-mode { background:#121212; color:#eee; }
-.container { display:flex; justify-content:center; align-items:center; min-height:100vh; flex-direction:column; }
-.card { width:90%; max-width:400px; background:#fff; border-radius:12px; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:20px; transition: background 0.3s, color 0.3s; }
-.dark-mode .card { background:#1e1e1e; color:#eee; }
-.card img { width:100%; border-radius:12px; }
-.brand { font-weight:bold; margin-top:8px; }
-.price,.size { margin-top:4px; }
-.link { margin-top:8px; text-decoration:none; color:#2f80ed; font-weight:bold; display:block; }
-#discord-btn { position:fixed; top:20px; right:20px; width:40px; height:40px; cursor:pointer; z-index:1000; }
-#discord-btn img { width:100%; height:100%; }
-#settings-panel { position:fixed; top:60px; right:20px; width:250px; background:#fff; border-radius:12px; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,0.2); display:none; flex-direction:column; }
-.dark-mode #settings-panel { background:#1e1e1e; color:#eee; }
-#settings-panel label { margin-top:8px; display:block; }
-#settings-panel input[type="checkbox"] { margin-right:6px; }
-#settings-panel input, #settings-panel select { width:100%; margin-top:4px; padding:4px; border-radius:4px; border:1px solid #ccc; }
-.dark-mode #settings-panel input, .dark-mode #settings-panel select { background:#2a2a2a; border:1px solid #555; color:#eee; }
-#vip-message { margin-top:10px; color:red; font-weight:bold; text-align:center; }
+.dark-mode {
+  background: #121212;
+  color: #f1f1f1;
+}
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+.dark-mode header {
+  background: rgba(30, 30, 30, 0.8);
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 1.2em;
+}
+.logo img {
+  width: 30px;
+  height: 30px;
+}
+#discord-btn {
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+#discord-btn:hover {
+  transform: scale(1.1);
+}
+.container {
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  width: 90%;
+  max-width: 1100px;
+  justify-content: center;
+}
+.card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  padding: 16px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+.dark-mode .card {
+  background: #1f1f1f;
+}
+.card img {
+  width: 100%;
+  border-radius: 12px;
+}
+.brand {
+  font-weight: 600;
+  margin-top: 8px;
+}
+.price {
+  color: #2f80ed;
+  font-weight: 500;
+}
+.link {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+  color: #2f80ed;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+.link:hover { opacity: 0.8; }
+.vip-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #ffd700, #ffcc33);
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  box-shadow: 0 0 15px rgba(255,215,0,0.6);
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.2s;
+}
+.vip-btn:hover {
+  box-shadow: 0 0 25px rgba(255,215,0,0.8);
+  transform: scale(1.05);
+}
+#vip-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  padding: 24px;
+  text-align: center;
+  display: none;
+}
+.dark-mode #vip-popup {
+  background: #1f1f1f;
+  color: #fff;
+}
+#vip-popup button {
+  margin-top: 12px;
+  background: #2f80ed;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+#vip-popup button:hover { opacity: 0.8; }
 </style>
 </head>
 <body>
-<div id="discord-btn">
+
+<header>
+  <div class="logo">
+    <img src="https://cdn-icons-png.flaticon.com/512/925/925123.png" alt="Vêtements">
+    Vinted Feed
+  </div>
+  <div id="discord-btn">
     <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord">
-</div>
+  </div>
+</header>
 
-<div id="settings-panel">
-    <h3>Paramètres</h3>
-    <label><input type="checkbox" id="toggle-theme"> Dark Mode</label>
-    <label>Marques favorites :</label>
-    <select id="favorite-brand">
-        <option>Dior</option><option>Gucci</option><option>Chanel</option>
-        <option>Louis Vuitton</option><option>Balenciaga</option><option>Prada</option>
-        <option>Nike</option><option>Adidas</option><option>Supreme</option>
-        <option>Hermes</option>
-    </select>
-    <label>Âge :</label>
-    <input type="number" id="user-age" min="10" max="99" value="18">
-    <button id="discord-connect" style="margin-top:10px; padding:6px; font-weight:bold;">Se connecter à Discord</button>
-    <div id="vip-message">Le timer automatique est réservé aux membres VIP (4,99€/mois)</div>
-</div>
+<div class="container" id="feed-container"></div>
 
-<div class="container" id="feed-container">
-    <!-- 3 annonces seront affichées ici -->
+<button class="vip-btn" id="vip-btn"></button>
+
+<div id="vip-popup">
+  <h3>Accès VIP ✨</h3>
+  <p>Débloquez le timer automatique et des options avancées.</p>
+  <p><strong>4,99 €/mois</strong></p>
+  <button onclick="closeVip()">Fermer</button>
 </div>
 
 <script>
-// Articles mock avec ton image
 const articles = [
-    {title:"Exemple Vêtement 1", price:"50€", size:"L", image:"https://i.imgur.com/8JYxM0y.png", link:"#"},
-    {title:"Exemple Vêtement 2", price:"70€", size:"M", image:"https://via.placeholder.com/400x400.png?text=Veste+2", link:"#"},
-    {title:"Exemple Vêtement 3", price:"30€", size:"S", image:"https://via.placeholder.com/400x400.png?text=T-shirt+3", link:"#"},
-    {title:"Exemple Vêtement 4", price:"90€", size:"XL", image:"https://via.placeholder.com/400x400.png?text=Jean+4", link:"#"},
-    {title:"Exemple Vêtement 5", price:"120€", size:"M", image:"https://via.placeholder.com/400x400.png?text=Chaussures+5", link:"#"}
+  {title:"Pull oversize beige", price:"25€", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png", link:"#"},
+  {title:"Pantalon cargo noir", price:"40€", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png", link:"#"},
+  {title:"T-shirt Dior", price:"70€", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png", link:"#"},
+  {title:"Veste Levi's vintage", price:"90€", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png", link:"#"},
+  {title:"Sweat Nike", price:"35€", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png", link:"#"},
+  {title:"Robe Zara fluide", price:"50€", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png", link:"#"}
 ];
 
-let pageIndex = 0;
-
-// Afficher 3 annonces par page
-function showPage(){
-    const container = document.getElementById('feed-container');
-    container.innerHTML = '';
-    for(let i=0;i<3;i++){
-        const a = articles[(pageIndex*3+i)%articles.length];
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <img src="${a.image}" alt="${a.title}">
-            <div class="brand">${a.title}</div>
-            <div class="price">Prix: ${a.price}</div>
-            <div class="size">Taille: ${a.size}</div>
-            <a class="link" href="${a.link}" target="_blank">Voir sur Vinted</a>
-        `;
-        container.appendChild(card);
-    }
-    pageIndex = (pageIndex+1) % Math.ceil(articles.length/3);
+function showFeed() {
+  const container = document.getElementById("feed-container");
+  container.innerHTML = "";
+  articles.forEach(a => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <img src="${a.image}" alt="${a.title}">
+      <div class="brand">${a.title}</div>
+      <div class="price">${a.price}</div>
+      <a class="link" href="${a.link}" target="_blank">Voir sur Vinted</a>
+    `;
+    container.appendChild(card);
+  });
 }
+showFeed();
 
-// Initial display
-showPage();
-
-// Timer automatique réservé VIP → ici on ne l’active pas pour non-VIP
-// clearInterval si tu veux simuler le feed VIP
-// let feedInterval = setInterval(showPage, 30000);
-
-// Discord button toggle
-const discordBtn = document.getElementById('discord-btn');
-const settingsPanel = document.getElementById('settings-panel');
-discordBtn.addEventListener('click', ()=> {
-    settingsPanel.style.display = (settingsPanel.style.display==='flex' ? 'none':'flex');
-    settingsPanel.style.flexDirection='column';
-});
-
-// Dark mode toggle
-const toggleTheme = document.getElementById('toggle-theme');
-toggleTheme.addEventListener('change', ()=> { document.body.classList.toggle('dark-mode'); });
-
-// Discord connect (mock)
-document.getElementById('discord-connect').addEventListener('click', ()=> {
-    alert("Connexion Discord (mock) : ici vous pourriez lancer OAuth et récupérer le compte de l'utilisateur.");
-});
+// VIP popup
+const vipBtn = document.getElementById("vip-btn");
+const vipPopup = document.getElementById("vip-popup");
+vipBtn.addEventListener("click", ()=> vipPopup.style.display = "block");
+function closeVip(){ vipPopup.style.display = "none"; }
 </script>
-
 </body>
 </html>
