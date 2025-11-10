@@ -107,8 +107,6 @@ button:hover { opacity:0.9; transform:scale(1.03); }
 
 .popup {
   position:fixed;
-  top:50%; left:50%;
-  transform:translate(-50%, -50%);
   background:#fff;
   padding:12px;
   border-radius:12px;
@@ -132,6 +130,22 @@ button:hover { opacity:0.9; transform:scale(1.03); }
   .info h2 { font-size:1.4rem; }
   .info p { font-size:1rem; }
 }
+
+/* Bouton Meilleurs articles VIP */
+#best-btn{
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 101;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  background:#2f80ed;
+  color:white;
+}
+#best-btn:hover { opacity: 0.9; transform: scale(1.05); }
 </style>
 </head>
 <body>
@@ -153,6 +167,9 @@ button:hover { opacity:0.9; transform:scale(1.03); }
     <label><input type="checkbox" id="notif-best"> Notifications meilleurs articles</label>
   </div>
 </div>
+
+<!-- Bouton Meilleurs articles VIP -->
+<button id="best-btn">☹</button>
 
 <main>
   <div class="card" id="card">
@@ -211,24 +228,21 @@ function skipItem(){
   },300);
 }
 
+function updateBestButton(){
+  const bestBtn = document.getElementById("best-btn");
+  bestBtn.textContent = bestArticles.length>0 ? "❗" : "☹";
+}
+
 function addBest(item){
   bestArticles.push(item);
-  const popup=document.getElementById("best-popup");
-  popup.innerHTML='<span class="popup-close">✖</span><h4>Meilleurs articles</h4><div class="item-list"></div>';
-  const list=popup.querySelector(".item-list");
-  bestArticles.forEach(it=>{
-    const div=document.createElement("div");
-    div.innerHTML=`<img src="${it.image}" /><div>${it.title}<br>${it.price}</div>`;
-    list.appendChild(div);
-  });
-  popup.style.display="block";
-  popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
+  updateBestButton();
 }
 
 document.getElementById("skip-btn").addEventListener("click",skipItem);
 document.getElementById("favorite-btn").addEventListener("click",()=>{
   const item=items[index];
   if(!favorites.includes(item))favorites.push(item);
+  updateBestButton();
 });
 
 document.getElementById("discord-logo").addEventListener("click",()=>{
@@ -244,6 +258,8 @@ const historyView=document.getElementById("history-view");
 const historyPopup=document.getElementById("history-popup");
 const favoritesPopup=document.getElementById("favorites-popup");
 const notifCheckbox=document.getElementById("notif-best");
+const bestBtn=document.getElementById("best-btn");
+const bestPopup=document.getElementById("best-popup");
 
 vipBtn.addEventListener("click",()=>{
   vipPopup.innerHTML='<span class="popup-close">✖</span><h4>Devenir VIP - 4,99€/mois</h4><ul><li>0 Delay</li><li>Notifications meilleurs articles</li><li>Historique complet</li><li>Favoris sur les articles</li><li>Marques préférées filtrables</li></ul><button id="pay-vip">Payer VIP</button>';
@@ -288,6 +304,25 @@ historyView.addEventListener("click",()=>{
 });
 
 notifCheckbox.addEventListener("change",()=>{notifBest=notifCheckbox.checked;});
+
+bestBtn.addEventListener("click", ()=>{
+  if(bestArticles.length===0){
+    alert("Pas de meilleurs articles rentables 😔");
+    return;
+  }
+  bestPopup.innerHTML='<span class="popup-close">✖</span><h4>Meilleurs articles VIP</h4><div class="item-list"></div>';
+  const list = bestPopup.querySelector(".item-list");
+  bestArticles.forEach(it=>{
+    const div=document.createElement("div");
+    div.innerHTML=`<img src="${it.image}" style="width:50px;height:50px;border-radius:6px;margin-right:6px;" /><div>${it.title}<br>${it.price}</div>`;
+    list.appendChild(div);
+  });
+  bestPopup.style.display="block";
+  bestPopup.querySelector(".popup-close").onclick = ()=>bestPopup.style.display="none";
+});
+
+// Initialisation du bouton
+updateBestButton();
 </script>
 
 </body>
