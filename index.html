@@ -6,139 +6,108 @@
 <title>Vinted Feed — VIP Demo</title>
 <style>
 :root{
-  --bg:#f5f5f5; --card:#fff; --text:#111; --muted:#666; --accent:#2563eb;
-  --vip-aura: 0 0 18px rgba(255,0,0,0.45);
+  --bg:#f5f7fb; --card:#fff; --text:#0b1220; --muted:#6b7280; --accent:#2563eb;
+  --vip-aura: 0 0 18px rgba(255,60,0,0.35);
 }
-html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-.dark{--bg:#0b1220;--card:#0f1720;--text:#e6eef8;--muted:#9aa6bf}
-
-header{
-  position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;
-  background:rgba(255,255,255,0.86);backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(2,6,23,0.06);z-index:50;
-}
-.dark header{background:rgba(10,12,18,0.8)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.dark{--bg:#071023;--card:#0d1722;--text:#e6eef8;--muted:#9aa6bf}
+header{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(255,255,255,0.9);backdrop-filter:blur(6px);z-index:60}
+.dark header{background:rgba(10,12,18,0.85)}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700}
-.logo img{width:30px;height:30px}
-#settings-btn{width:40px;height:40px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-#settings-btn img{width:100%;height:100%;object-fit:contain}
-#settings-btn.vip{box-shadow:var(--vip-aura);border-radius:10px}
+.logo img{width:34px;height:34px}
+#settingsBtn{width:40px;height:40px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#settingsBtn.vip{box-shadow:var(--vip-aura)}
+#settingsBtn img{width:100%;height:100%;object-fit:contain}
 
-#settings{
-  position:fixed;top:76px;right:12px;width:300px;background:var(--card);padding:12px;border-radius:12px;box-shadow:0 12px 40px rgba(2,6,23,0.12);display:none;z-index:60;
-}
-.dark #settings{background:var(--card)}
-#settings h4{margin:0 0 8px 0}
+/* Settings panel */
+#settingsPanel{position:fixed;top:76px;right:12px;width:320px;background:var(--card);padding:12px;border-radius:12px;box-shadow:0 18px 40px rgba(2,6,23,0.12);display:none;z-index:70}
 .field{margin:8px 0;font-size:0.95rem}
 .field label{display:flex;align-items:center;gap:8px}
 .small{font-size:0.86rem;color:var(--muted)}
+.vip-status{display:flex;align-items:center;gap:8px;justify-content:space-between}
 
-main{padding-top:86px;width:92%;max-width:920px;margin-left:auto;margin-right:auto;display:flex;flex-direction:column;align-items:center;gap:14px;min-height:calc(100vh - 120px);}
-
-.card{
-  width:100%;background:var(--card);border-radius:14px;box-shadow:0 18px 40px rgba(2,6,23,0.06);overflow:hidden;display:flex;flex-direction:column;transition:transform .45s ease;
-  position:relative;
-}
-.card img{width:100%;height:320px;object-fit:cover;background:#f7f7f7}
-.card .info{padding:14px;display:flex;flex-direction:column;gap:6px}
+/* Main/card */
+main{padding-top:86px;width:92%;max-width:920px;margin:0 auto;min-height:calc(100vh - 140px);display:flex;flex-direction:column;align-items:center;gap:12px}
+.card{width:100%;background:var(--card);border-radius:12px;box-shadow:0 18px 40px rgba(2,6,23,0.06);overflow:hidden;display:flex;flex-direction:column;transition:transform .4s ease}
+.card img{width:100%;height:320px;object-fit:cover;background:#f3f3f3}
+.info{padding:14px;display:flex;flex-direction:column;gap:6px}
 .info h2{margin:0;font-size:1.15rem}
 .info p{margin:0;color:var(--muted)}
 .price{font-weight:800;color:var(--accent);margin-top:8px}
 
-/* controls bottom */
-.controls{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;display:flex;gap:10px;z-index:40}
-.btn{padding:10px 16px;border-radius:10px;border:0;font-weight:700;cursor:pointer;background:var(--accent);color:#fff;box-shadow:0 10px 24px rgba(37,99,235,0.12)}
-.btn.ghost{background:#6b7280}
-.btn.fav{background:#e74c3c}
-
-/* popups */
-.popup{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:86%;max-width:480px;background:var(--card);padding:14px;border-radius:12px;box-shadow:0 20px 60px rgba(2,6,23,0.2);display:none;z-index:80;max-height:78vh;overflow:auto}
-.dark .popup{background:var(--card)}
-.popup .close{position:absolute;right:10px;top:8px;cursor:pointer;font-weight:700;font-size:18px}
-.item-list>div{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #eee}
-.item-list img{width:64px;height:64px;object-fit:cover;border-radius:8px}
-.small-muted{font-size:0.85rem;color:var(--muted)}
-
-/* brand chips */
-.brand-chip{display:inline-block;padding:6px 8px;margin:4px;border-radius:8px;border:1px solid #ddd;cursor:pointer;font-size:0.9rem}
-.brand-chip.on{background:gold;color:#000;border-color:gold}
-
-/* desktop layout: image left, info right */
+/* desktop layout */
 @media(min-width:820px){
   .card{flex-direction:row;height:460px}
   .card img{width:62%;height:100%}
-  .card .info{width:38%;padding:20px;justify-content:center}
+  .info{width:38%;padding:22px;justify-content:center}
 }
 
-/* small tweaks mobile */
-@media(max-width:420px){
-  .card img{height:260px}
-  .item-list img{width:52px;height:52px}
-}
+/* Bottom controls */
+.controls{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;display:flex;gap:10px;z-index:60}
+.btn{padding:10px 16px;border-radius:10px;border:0;font-weight:700;cursor:pointer;background:var(--accent);color:#fff;box-shadow:0 10px 24px rgba(37,99,235,0.12)}
+.btn.ghost{background:#6b7280}
+.btn.fav{background:#e7463a}
+
+/* Popup base */
+.popup{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:92%;max-width:520px;background:var(--card);padding:14px;border-radius:12px;box-shadow:0 24px 80px rgba(2,6,23,0.18);display:none;z-index:120;max-height:82vh;overflow:auto}
+.popup .close{position:absolute;right:12px;top:10px;cursor:pointer;font-weight:700;font-size:18px}
+.item-list>div{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.06)}
+.item-list img{width:64px;height:64px;object-fit:cover;border-radius:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{padding:6px 8px;border-radius:8px;border:1px solid #ddd;cursor:pointer;font-size:0.92rem}
+.chip.on{background:gold;color:#000;border-color:gold}
+
+/* small helpers */
+.hidden{display:none}
+.small-muted{color:var(--muted);font-size:0.9rem}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Vinted_logo.svg/256px-Vinted_logo.svg.png" alt="Vinted logo">
-    Vinted Feed
-  </div>
-
-  <!-- settings button top-right (Vinted PNG) -->
-  <div id="settings-btn" title="Paramètres">
-    <img id="settings-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Vinted_logo.svg/256px-Vinted_logo.svg.png" alt="Paramètres">
+  <div class="logo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Vinted_logo.svg/256px-Vinted_logo.svg.png" alt="Vinted">Vinted Feed</div>
+  <div id="settingsBtn" title="Paramètres (Vinted)">
+    <img id="settingsIcon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Vinted_logo.svg/256px-Vinted_logo.svg.png" alt="Param">
   </div>
 </header>
 
 <!-- Settings panel -->
-<div id="settings" role="dialog" aria-hidden="true">
-  <h4>⚙️ Paramètres</h4>
-
-  <div class="field">
-    <label><input id="darkToggle" type="checkbox"> Mode sombre / clair</label>
+<div id="settingsPanel" role="dialog" aria-hidden="true">
+  <div class="field vip-status">
+    <div><strong>⚙️ Paramètres</strong></div>
+    <div id="vipIndicator" class="small-muted">Non VIP</div>
   </div>
+
+  <div class="field"><label><input id="darkToggle" type="checkbox"> Mode sombre / clair</label></div>
 
   <div class="field small-muted">Compte</div>
-  <div class="field" id="accountRow">
-    <div id="vipStatus" class="small-muted">Non VIP</div>
-    <button id="openVIP" style="margin-left:auto;padding:8px 10px;border-radius:8px;border:0;background:linear-gradient(90deg,gold,orange);color:#000;cursor:pointer;font-weight:700">Devenir VIP</button>
+  <div class="field">
+    <button id="openVipBtn" class="btn ghost">Devenir VIP</button>
   </div>
 
-  <div style="height:8px"></div>
+  <hr/>
+
   <div class="field small-muted">Fonctionnalités VIP</div>
-
-  <!-- VIP-only controls (hidden until VIP) -->
-  <div id="vipControls" style="display:none">
-    <div class="field">
-      <label><input id="toggleDelay" type="checkbox"> 0 Delay (plus rapide)</label>
-    </div>
-    <div class="field">
-      <label><input id="toggleNotif" type="checkbox"> Notifications meilleurs articles</label>
-    </div>
-    <div class="field">
-      <label><input id="toggleFavorites" type="checkbox"> Activer favoris</label>
-    </div>
-    <div class="field">
-      <label class="small-muted">Marques préférées (clique pour sélectionner)</label>
-      <div id="brandList" style="margin-top:8px"></div>
-    </div>
-
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button id="viewFavorites" class="btn">Voir favoris</button>
-      <button id="viewHistory" class="btn ghost">Historique</button>
+  <div id="vipControlsArea" class="hidden">
+    <div class="field"><label><input id="toggle0Delay" type="checkbox"> 0 Delay (rapide)</label></div>
+    <div class="field"><label><input id="toggleNotifBest" type="checkbox"> Notifications meilleurs articles</label></div>
+    <div class="field"><label><input id="toggleFavs" type="checkbox"> Activer Favoris</label></div>
+    <div class="field"><button id="openBrandsBtn" class="btn ghost">Marques préférées</button></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="openFavoritesBtn" class="btn">Voir favoris</button>
+      <button id="openHistoryBtn" class="btn ghost">Voir historique</button>
     </div>
   </div>
 
-  <div style="height:6px"></div>
-  <div class="small-muted" style="margin-top:10px">Notifications & test</div>
-  <div class="field small-muted">Les notifications et "Meilleurs articles" sont factices (simulation)</div>
+  <div style="margin-top:10px" class="small-muted">Les notifications et "Meilleurs articles" sont factices (simulation).</div>
 </div>
 
 <main>
-  <div id="feedArea" class="card" role="region" aria-live="polite">
-    <img id="itemImage" src="" alt="Article image">
+  <div class="card" id="card">
+    <img id="itemImg" src="" alt="Article image">
     <div class="info">
-      <h2 id="itemTitle">Titre</h2>
+      <h2 id="itemTitle">Titre de l'article</h2>
       <p id="itemBrand" class="small-muted">Marque</p>
       <p id="itemSize" class="small-muted">Taille</p>
       <p id="itemCond" class="small-muted">État</p>
@@ -147,71 +116,99 @@ main{padding-top:86px;width:92%;max-width:920px;margin-left:auto;margin-right:au
   </div>
 </main>
 
-<!-- bottom controls -->
+<!-- bottom actions -->
 <div class="controls" role="toolbar" aria-label="Actions">
   <button id="skipBtn" class="btn ghost">⏭ Skip</button>
-  <button id="favBtn" class="btn fav" style="display:none">❤️ Favoris</button>
-  <button id="openVintedBtn" class="btn">🛍 Voir sur Vinted</button>
+  <button id="favBtn" class="btn fav hidden">❤️ Favoris</button>
+  <button id="viewBtn" class="btn">🛍 Voir sur Vinted</button>
 </div>
 
-<!-- POPUPS -->
-<div id="vipPopup" class="popup" role="dialog" aria-modal="true">
+<!-- Popups -->
+<div id="vipPopup" class="popup" aria-modal="true">
   <span class="close" id="vipClose">✖</span>
   <h3>Devenir VIP — 4,99€ / mois (simulation)</h3>
-  <p class="small-muted">Fonctionnalités affichées ici avant paiement :</p>
+  <p class="small-muted">Test : durée VIP = 60s. Après expiration, les fonctionnalités disparaissent.</p>
   <ul>
-    <li>0 Delay — feed plus rapide</li>
+    <li>0 Delay (rafraîchissement plus rapide)</li>
     <li>Notifications meilleurs articles</li>
-    <li>Favoris (ajouter / supprimer)</li>
-    <li>Historique des skips (supprimer 1 ou tout)</li>
+    <li>Favoris sur les articles</li>
+    <li>Historique des skips</li>
     <li>Marques préférées (filtre)</li>
   </ul>
-  <div style="margin-top:10px;display:flex;gap:8px">
-    <button id="payVipBtn" class="btn">Payer 4,99€ (simulé)</button>
-    <button id="vipCancel" class="btn ghost">Annuler</button>
+  <div style="margin-top:12px;display:flex;gap:8px">
+    <button id="payVip" class="btn">Payer 4,99€ (simulé)</button>
+    <button id="cancelVip" class="btn ghost">Annuler</button>
   </div>
 </div>
 
-<div id="historyPopup" class="popup"><span class="close" id="histClose">✖</span><h3>Historique</h3><div class="item-list" id="historyList"></div><div style="margin-top:8px"><button id="clearHistory" class="btn ghost">Tout supprimer</button></div></div>
+<div id="brandsPopup" class="popup">
+  <span class="close" id="brandsClose">✖</span>
+  <h3>Marques préférées (VIP)</h3>
+  <p class="small-muted">Clique sur les marques pour les activer (filtre du feed)</p>
+  <div id="brandsChips" class="chips" style="margin-top:10px"></div>
+  <div style="margin-top:12px"><button id="closeBrands" class="btn ghost">Fermer</button></div>
+</div>
 
-<div id="favoritesPopup" class="popup"><span class="close" id="favClose">✖</span><h3>Favoris</h3><div class="item-list" id="favoritesList"></div><div style="margin-top:8px"><button id="clearFavs" class="btn ghost">Tout supprimer</button></div></div>
+<div id="favoritesPopup" class="popup">
+  <span class="close" id="favClose">✖</span>
+  <h3>Favoris</h3>
+  <div id="favoritesList" class="item-list"></div>
+  <div style="margin-top:10px"><button id="clearFavs" class="btn ghost">Tout supprimer</button></div>
+</div>
 
-<div id="bestPopup" class="popup"><span class="close" id="bestClose">✖</span><h3>Meilleurs articles</h3><div class="item-list" id="bestList"></div></div>
+<div id="historyPopup" class="popup">
+  <span class="close" id="histClose">✖</span>
+  <h3>Historique</h3>
+  <div id="historyList" class="item-list"></div>
+  <div style="margin-top:10px"><button id="clearHistory" class="btn ghost">Tout supprimer</button></div>
+</div>
+
+<div id="bestPopup" class="popup">
+  <span class="close" id="bestClose">✖</span>
+  <h3>Meilleurs articles</h3>
+  <div id="bestList" class="item-list"></div>
+</div>
 
 <script>
-/* ===== Data & state ===== */
-const BASE_BRANDS = ["Nike","Adidas","Ralph Lauren","CP Company","Puma","Reebok","New Balance","Converse","Vans","The North Face","Columbia","Patagonia","Fila","Champion","Tommy Hilfiger","Lacoste","Jordan","Asics","Carhartt","Supreme"];
+/* -------------------------
+   State + sample data
+   ------------------------- */
+const BRANDS = ["Nike","Adidas","Ralph Lauren","CP Company","Puma","Reebok","New Balance","Converse","Vans","The North Face","Columbia","Patagonia","Fila","Champion","Tommy Hilfiger","Lacoste","Jordan","Asics","Carhartt","Supreme"];
 
 let items = [
-  {id:1, title:"Sweat Nike Tech", brand:"Nike", size:"M", cond:"Très bon état", price:"45€", link:"#", image:"https://images.unsplash.com/photo-1520975698519-53c8e7c1a7a6?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=1"},
-  {id:2, title:"T-shirt Dior logo", brand:"Dior", size:"L", cond:"Neuf", price:"90€", link:"#", image:"https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=2"},
-  {id:3, title:"Jean Levi's 501", brand:"Levi's", size:"42", cond:"Bon état", price:"55€", link:"#", image:"https://images.unsplash.com/photo-1589654314857-acc0c3c5e5a4?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=3"},
-  {id:4, title:"Veste Zara beige", brand:"Zara", size:"S", cond:"Très bon état", price:"35€", link:"#", image:"https://images.unsplash.com/photo-1539695393000-3f8a0d8fde23?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=4"}
+  {id:1,title:"Sweat Nike Tech",brand:"Nike",size:"M",cond:"Très bon état",price:"45€",link:"#",image:"https://images.unsplash.com/photo-1520975698519-53c8e7c1a7a6?q=80&w=1200&auto=format&fit=crop"},
+  {id:2,title:"T-shirt Dior logo",brand:"Dior",size:"L",cond:"Neuf",price:"90€",link:"#",image:"https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop"},
+  {id:3,title:"Jean Levi's 501",brand:"Levi's",size:"42",cond:"Bon état",price:"55€",link:"#",image:"https://images.unsplash.com/photo-1589654314857-acc0c3c5e5a4?q=80&w=1200&auto=format&fit=crop"},
+  {id:4,title:"Veste Zara beige",brand:"Zara",size:"S",cond:"Très bon état",price:"35€",link:"#",image:"https://images.unsplash.com/photo-1539695393000-3f8a0d8fde23?q=80&w=1200&auto=format&fit=crop"}
 ];
 
 let idx = 0;
 let isVIP = false;
-let vipExpiresAt = null; // timestamp ms
-let vipCountdownInterval = null;
+let vipExpires = 0; // ms timestamp
+let vipInterval = null;
 let favorites = [];
 let history = [];
 let bestArticles = [];
-let selectedBrands = []; // filters (VIP only)
+let selectedBrands = []; // active brand filters (VIP)
 let zeroDelay = false;
 let notifBest = false;
+let feedInterval = null;
 
-/* ===== UI refs ===== */
-const settingsBtn = document.getElementById('settings-btn');
-const settingsPanel = document.getElementById('settings');
+/* -------------------------
+   Helpers - DOM refs
+   ------------------------- */
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsPanel = document.getElementById('settingsPanel');
 const darkToggle = document.getElementById('darkToggle');
-const openVIP = document.getElementById('openVIP');
-const vipControls = document.getElementById('vipControls') || null;
+const vipIndicator = document.getElementById('vipIndicator');
+const vipControlsArea = document.getElementById('vipControlsArea');
+const openVipBtn = document.getElementById('openVipBtn');
 const vipPopup = document.getElementById('vipPopup');
 const vipClose = document.getElementById('vipClose');
-const payVipBtn = document.getElementById('payVipBtn');
-const vipCancel = document.getElementById('vipCancel');
+const payVip = document.getElementById('payVip');
+const cancelVip = document.getElementById('cancelVip');
 
-const itemImage = document.getElementById('itemImage');
+const itemImg = document.getElementById('itemImg');
 const itemTitle = document.getElementById('itemTitle');
 const itemBrand = document.getElementById('itemBrand');
 const itemSize = document.getElementById('itemSize');
@@ -220,376 +217,293 @@ const itemPrice = document.getElementById('itemPrice');
 
 const skipBtn = document.getElementById('skipBtn');
 const favBtn = document.getElementById('favBtn');
-const openVintedBtn = document.getElementById('openVintedBtn');
+const viewBtn = document.getElementById('viewBtn');
 
-const vipStatusEl = document.getElementById('vipStatus');
-const vipControlsBlock = document.getElementById('vipControls') || document.createElement('div'); // fallback
-const toggleDelay = document.getElementById('toggleDelay');
-const toggleNotif = document.getElementById('toggleNotif');
-const toggleFavorites = document.getElementById('toggleFavorites');
-const brandListDiv = document.getElementById('brandList');
-const viewFavoritesBtn = document.getElementById('viewFavorites');
-const viewHistoryBtn = document.getElementById('viewHistory');
+const toggle0Delay = document.getElementById('toggle0Delay');
+const toggleNotifBest = document.getElementById('toggleNotifBest');
+const toggleFavs = document.getElementById('toggleFavs');
+const openBrandsBtn = document.getElementById('openBrandsBtn');
+const brandsChips = document.getElementById('brandsChips');
 
-const viewFavorites = document.getElementById('viewFavorites');
-const viewHistory = document.getElementById('viewHistory');
-const favoritesViewBtn = document.getElementById('viewFavorites'); // in settings
-const historyViewBtn = document.getElementById('viewHistory'); // in settings
+const brandsPopup = document.getElementById('brandsPopup');
+const brandsClose = document.getElementById('brandsClose');
+const closeBrands = document.getElementById('closeBrands');
 
 const favoritesPopup = document.getElementById('favoritesPopup');
 const favoritesList = document.getElementById('favoritesList');
 const favClose = document.getElementById('favClose');
-const clearFavsBtn = document.getElementById('clearFavs');
+const clearFavs = document.getElementById('clearFavs');
 
 const historyPopup = document.getElementById('historyPopup');
 const historyList = document.getElementById('historyList');
 const histClose = document.getElementById('histClose');
-const clearHistoryBtn = document.getElementById('clearHistory');
+const clearHistory = document.getElementById('clearHistory');
 
 const bestPopup = document.getElementById('bestPopup');
 const bestList = document.getElementById('bestList');
 const bestClose = document.getElementById('bestClose');
 
-const settings_vipControls = document.getElementById('vipControls');
+const openFavoritesBtn = document.getElementById('openFavoritesBtn');
+const openHistoryBtn = document.getElementById('openHistoryBtn');
+const openFavoritesBtn2 = document.getElementById('openFavoritesBtn');
+const openHistoryBtn2 = document.getElementById('openHistoryBtn');
+const openFavoritesBtnInSettings = document.getElementById('openFavoritesBtn');
+const openHistoryBtnInSettings = document.getElementById('openHistoryBtn');
 
-/* ===== helpers ===== */
-function $(id){return document.getElementById(id)}
-function openPanel(panel){ panel.style.display='block' }
-function closePanel(panel){ panel.style.display='none' }
+const openBrandsBtnSettings = document.getElementById('openBrandsBtn');
 
-/* ===== brand chips (VIP-only) ===== */
-function buildBrandChips(){
-  brandListDiv.innerHTML = '';
-  BASE_BRANDS.forEach(b=>{
-    const sp = document.createElement('span');
-    sp.className='brand-chip';
-    sp.textContent=b;
-    sp.onclick = ()=>{
-      if(!isVIP){ /* blink to show locked */ sp.animate([{opacity:1},{opacity:0.6},{opacity:1}],{duration:220}); return; }
-      if(selectedBrands.includes(b)){ selectedBrands = selectedBrands.filter(x=>x!==b); sp.classList.remove('on'); }
-      else{ selectedBrands.push(b); sp.classList.add('on'); }
-      renderItem(); // apply filter immediately
-    };
-    brandListDiv.appendChild(sp);
-  });
-}
+/* -------------------------
+   Utility functions
+   ------------------------- */
+function openPopup(el){ el.style.display='block'; }
+function closePopup(el){ el.style.display='none'; }
+function applyTheme(){ document.documentElement.classList.toggle('dark', darkToggle.checked); }
 
-/* ===== rendering top item with brand filter ===== */
-function getNextFiltered(startIdx=idx){
-  // find next item that matches selectedBrands (if VIP filter active)
-  for(let i=0;i<items.length;i++){
-    const j=(startIdx + i) % items.length;
-    const it = items[j];
-    if(isVIP && selectedBrands.length>0){
-      if(selectedBrands.includes(it.brand)) return j;
-      else continue;
+/* -------------------------
+   Rendering feed item
+   ------------------------- */
+function findNextIndex(start){
+  // if VIP + selectedBrands active, skip until brand matches
+  if(isVIP && selectedBrands.length>0){
+    for(let i=0;i<items.length;i++){
+      const j = (start + i) % items.length;
+      if(selectedBrands.includes(items[j].brand)) return j;
     }
-    return j; // if no filter or not VIP return first
+    return start; // fallback
   }
-  return startIdx;
+  return start;
 }
-function renderItem(){
-  if(items.length===0){
-    itemImage.src=''; itemTitle.textContent='Aucun article'; itemBrand.textContent=''; itemSize.textContent=''; itemCond.textContent=''; itemPrice.textContent='';
+function renderCurrent(){
+  if(items.length === 0){
+    itemImg.src=''; itemTitle.textContent='Aucun article'; itemBrand.textContent=''; itemSize.textContent=''; itemCond.textContent=''; itemPrice.textContent='';
     return;
   }
-  idx = getNextFiltered(idx);
+  idx = findNextIndex(idx);
   const it = items[idx];
-  itemImage.src = it.image || '';
+  itemImg.src = it.image || '';
   itemTitle.textContent = it.title || '';
   itemBrand.textContent = 'Marque : ' + (it.brand||'');
   itemSize.textContent = 'Taille : ' + (it.size||'');
   itemCond.textContent = 'État : ' + (it.cond||'');
   itemPrice.textContent = it.price || '';
-  openVintedBtn.onclick = () => window.open(it.link || '#', '_blank');
-  favBtn.style.display = (isVIP && document.getElementById('toggleFavorites') && document.getElementById('toggleFavorites').checked) ? 'inline-block' : 'none';
+  viewBtn.onclick = ()=> window.open(it.link || '#','_blank');
+  // favorites button visible only if VIP + toggleFavs checked
+  favBtn.classList.toggle('hidden', !(isVIP && toggleFavs.checked));
 }
 
-/* ===== skip animation & logic ===== */
-function skipAction(){
+/* -------------------------
+   Skip (animation + history)
+   ------------------------- */
+function doSkip(){
   const card = document.querySelector('.card');
-  card.style.transition = 'transform .38s ease, opacity .3s';
+  card.style.transition = 'transform .36s ease, opacity .3s';
   card.style.transform = 'translateX(-120%)';
   card.style.opacity = '0';
   setTimeout(()=>{
-    // push to history
+    // save to history
     history.unshift(items[idx]);
-    // advance index
+    // advance
     idx = (idx + 1) % items.length;
-    // reset transform
+    // reset style
     card.style.transition = 'none';
     card.style.transform = 'translateX(0)';
     card.style.opacity = '1';
-    renderItem();
-    // maybe add best article if notif on and VIP
-    if(isVIP && notifBest && Math.random() < 0.35){
-      addBestArticle(items[idx]);
-    }
-  },380);
+    renderCurrent();
+    // maybe add a best article if notifications and VIP on
+    if(isVIP && toggleNotifBest.checked && Math.random() < 0.35) simulateBest();
+  },360);
 }
 
-/* ===== favorites ===== */
-function addFavorite(){
+/* -------------------------
+   Favorites management
+   ------------------------- */
+function addToFavorites(){
   const it = items[idx];
-  if(!favorites.find(f=>f.id === it.id)) favorites.unshift(it);
-  // small feedback
-  favBtn.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:220});
+  if(!favorites.find(f=>f.id===it.id)) favorites.unshift(it);
+  // visual feedback
+  favBtn.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:180});
+}
+function renderFavoritesList(){
+  favoritesList.innerHTML = '';
+  if(favorites.length === 0){ favoritesList.innerHTML = '<div class="small">Aucun favori</div>'; return; }
+  favorites.forEach((it,i)=>{
+    const row = document.createElement('div');
+    row.innerHTML = `<img src="${it.image}" alt=""><div><strong>${it.title}</strong><div class="small-muted">${it.price}</div><div style="margin-top:8px"><button data-i="${i}" class="delFav">Supprimer</button></div></div>`;
+    favoritesList.appendChild(row);
+  });
+  favoritesList.querySelectorAll('.delFav').forEach(btn=>{
+    btn.onclick = ()=>{ favorites.splice(Number(btn.dataset.i),1); renderFavoritesList(); };
+  });
 }
 
-/* ===== popups: favorites/history/best ===== */
-function openFavoritesPopup(){
-  favoritesList.innerHTML = '';
-  if(favorites.length === 0){
-    favoritesList.innerHTML = '<div class="small-muted">Aucun favori.</div>';
-  } else {
-    favorites.forEach((it,i)=>{
-      const div = document.createElement('div');
-      div.innerHTML = `<img src="${it.image}" alt=""><div><strong>${it.title}</strong><div class="small-muted">${it.price}</div><div style="margin-top:6px"><button data-i="${i}" class="delFavBtn">Supprimer</button></div></div>`;
-      favoritesList.appendChild(div);
-    });
-    // attach delete handlers
-    favoritesList.querySelectorAll('.delFavBtn').forEach(btn=>{
-      btn.onclick = ()=>{ favorites.splice(Number(btn.dataset.i),1); openFavoritesPopup(); };
-    });
-  }
-  openPanel(favoritesPopup);
-}
-function openHistoryPopup(){
+/* -------------------------
+   History management
+   ------------------------- */
+function renderHistoryList(){
   historyList.innerHTML = '';
-  if(history.length === 0) historyList.innerHTML = '<div class="small-muted">Aucun historique.</div>';
-  else {
-    history.forEach((it,i)=>{
-      const div = document.createElement('div');
-      div.innerHTML = `<img src="${it.image}" alt=""><div><strong>${it.title}</strong><div class="small-muted">${it.price}</div><div style="margin-top:6px"><button data-i="${i}" class="delHistBtn">Supprimer</button></div></div>`;
-      historyList.appendChild(div);
-    });
-    historyList.querySelectorAll('.delHistBtn').forEach(btn=>{
-      btn.onclick = ()=>{ history.splice(Number(btn.dataset.i),1); openHistoryPopup(); };
-    });
-  }
-  openPanel(historyPopup);
+  if(history.length === 0){ historyList.innerHTML = '<div class="small">Aucun historique</div>'; return; }
+  history.forEach((it,i)=>{
+    const row = document.createElement('div');
+    row.innerHTML = `<img src="${it.image}" alt=""><div><strong>${it.title}</strong><div class="small-muted">${it.price}</div><div style="margin-top:8px"><button data-i="${i}" class="delHist">Supprimer</button></div></div>`;
+    historyList.appendChild(row);
+  });
+  historyList.querySelectorAll('.delHist').forEach(btn=>{
+    btn.onclick = ()=>{ history.splice(Number(btn.dataset.i),1); renderHistoryList(); };
+  });
 }
-function addBestArticle(it){
-  bestArticles.unshift(it);
-  // keep list short
-  if(bestArticles.length>8) bestArticles.length=8;
-  // show popup
+
+/* -------------------------
+   Brands popup (VIP)
+   ------------------------- */
+function buildBrandChips(){
+  brandsChips.innerHTML = '';
+  BRANDS.forEach(b=>{
+    const sp = document.createElement('div');
+    sp.className = 'chip' + (selectedBrands.includes(b) ? ' on' : '');
+    sp.textContent = b;
+    sp.onclick = ()=>{
+      if(!isVIP){ sp.animate([{opacity:1},{opacity:0.6},{opacity:1}],{duration:200}); return; }
+      if(selectedBrands.includes(b)){ selectedBrands = selectedBrands.filter(x=>x!==b); sp.classList.remove('on'); }
+      else { selectedBrands.push(b); sp.classList.add('on'); }
+      renderCurrent();
+    };
+    brandsChips.appendChild(sp);
+  });
+}
+
+/* -------------------------
+   Meilleurs articles (factices)
+   ------------------------- */
+function simulateBest(){
+  // take current and next few as best
+  bestArticles.unshift(items[idx]);
+  if(bestArticles.length > 6) bestArticles.length = 6;
   renderBestPopup();
 }
 function renderBestPopup(){
   bestList.innerHTML = '';
-  if(bestArticles.length===0) bestList.innerHTML = '<div class="small-muted">Aucun meilleur article pour l\'instant.</div>';
+  if(bestArticles.length === 0){ bestList.innerHTML = '<div class="small">Aucun meilleur article</div>'; }
   else {
     bestArticles.forEach(it=>{
-      const div = document.createElement('div');
-      div.innerHTML = `<img src="${it.image}" alt=""><div><strong>${it.title}</strong><div class="small-muted">${it.price}</div></div>`;
-      bestList.appendChild(div);
+      const r = document.createElement('div');
+      r.innerHTML = `<img src="${it.image}" alt=""><div><strong>${it.title}</strong><div class="small-muted">${it.price}</div></div>`;
+      bestList.appendChild(r);
     });
   }
-  openPanel(bestPopup);
+  openPopup(bestPopup);
 }
 
-/* ===== VIP flow & timer ===== */
-function openVipPopup(){
-  vipPopup.innerHTML = `<span class="close" id="vipCloseBtn">✖</span>
-    <h3>Devenir VIP — 4,99€/mois (simulation)</h3>
-    <p class="small-muted">En test : VIP actif 1 minute. Toutes les fonctionnalités ci-dessous seront activées :</p>
-    <ul>
-      <li>0 Delay (rafraîchissement plus rapide)</li>
-      <li>Notifications meilleurs articles</li>
-      <li>Favoris (ajout / suppression)</li>
-      <li>Historique (supprimer 1 / tout)</li>
-      <li>Marques préférées (filtre)</li>
-    </ul>
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button id="payNow" class="btn">Payer 4,99€ (simulé)</button>
-      <button id="cancelVip" class="btn ghost">Annuler</button>
-    </div>`;
-  openPanel(vipPopup);
-  document.getElementById('vipCloseBtn').onclick = ()=> closePanel(vipPopup);
-  document.getElementById('cancelVip').onclick = ()=> closePanel(vipPopup);
-  document.getElementById('payNow').onclick = ()=>{
-    // activate VIP for 1 minute (test)
-    isVIP = true;
-    vipExpiresAt = Date.now() + 60_000; // 1 minute
-    setupVipUI();
-    closePanel(vipPopup);
-    startVipCountdown();
-    // feedback
-    alert('✅ VIP activé (test 1 minute).');
-  };
+/* -------------------------
+   VIP flow + timer
+   ------------------------- */
+function openVipDialog(){
+  openPopup(vipPopup);
 }
-function setupVipUI(){
-  // show VIP controls in settings
-  document.getElementById('settings-btn').classList.add('vip');
-  document.getElementById('vipStatus').textContent = 'VIP actif';
-  document.getElementById('vipControls').style.display = 'block'; // ensure exists
-  // unhide VIP buttons inside settings
-  document.getElementById('toggleDelay').checked = false;
-  document.getElementById('toggleNotif').checked = false;
-  document.getElementById('toggleFavorites').checked = true;
-  // show favorites/history buttons
-  document.getElementById('viewFavorites').style.display = 'inline-block';
-  document.getElementById('viewHistory').style.display = 'inline-block';
-  // show favorites button in controls according to toggle
-  favBtn.style.display = document.getElementById('toggleFavorites').checked ? 'inline-block' : 'none';
-  buildBrandChips(); // create brand chips
+function activateVip(durationMs = 60000){
+  isVIP = true;
+  vipExpires = Date.now() + durationMs;
+  document.getElementById('settingsBtn').classList.add('vip');
+  vipIndicator.textContent = 'VIP actif';
+  vipControlsArea.classList.remove('hidden');
+  // Show fav button according to toggle
+  favBtn.classList.toggle('hidden', !toggleFavs.checked);
+  buildBrandChips();
+  startVipTimer();
 }
-function stopVip(){
+function deactivateVip(){
   isVIP = false;
-  vipExpiresAt = null;
-  clearInterval(vipCountdownInterval); vipCountdownInterval = null;
-  document.getElementById('settings-btn').classList.remove('vip');
-  document.getElementById('vipStatus').textContent = 'Non VIP';
-  document.getElementById('vipControls').style.display = 'none';
-  document.getElementById('viewFavorites').style.display = 'none';
-  document.getElementById('viewHistory').style.display = 'none';
-  favBtn.style.display = 'none';
+  vipExpires = 0;
+  clearInterval(vipInterval); vipInterval = null;
+  document.getElementById('settingsBtn').classList.remove('vip');
+  vipIndicator.textContent = 'Non VIP';
+  vipControlsArea.classList.add('hidden');
+  favBtn.classList.add('hidden');
   selectedBrands = [];
-  document.querySelectorAll('.brand-chip').forEach(ch=>ch.classList.remove('on'));
-  alert('⏳ VIP expiré — tu dois repayer pour réactiver les fonctionnalités.');
+  buildBrandChips();
+  alert('⏳ Ton VIP est expiré (test).');
 }
-
-/* countdown UI */
-function startVipCountdown(){
-  // show countdown on settings button and in vipStatus
-  if(vipCountdownInterval) clearInterval(vipCountdownInterval);
-  vipCountdownInterval = setInterval(()=>{
-    const remaining = vipExpiresAt - Date.now();
-    if(remaining <= 0){
-      clearInterval(vipCountdownInterval);
-      stopVip();
-      return;
-    }
-    const s = Math.floor(remaining/1000);
-    const min = Math.floor(s/60);
-    const sec = s % 60;
-    document.getElementById('vipStatus').textContent = `VIP actif — ${min}m ${sec}s`;
+function startVipTimer(){
+  if(vipInterval) clearInterval(vipInterval);
+  vipInterval = setInterval(()=>{
+    const remain = vipExpires - Date.now();
+    if(remain <= 0){ deactivateVip(); clearInterval(vipInterval); return; }
+    const s = Math.floor(remain / 1000);
+    const m = Math.floor(s / 60); const sec = s % 60;
+    vipIndicator.textContent = `VIP actif — ${m}m ${sec}s`;
   }, 500);
 }
 
-/* ===== feed generator (adds new items periodically; respects 0-delay) ===== */
-let feedInterval = null;
+/* -------------------------
+   Feed interval (0-delay)
+   ------------------------- */
 function resetFeedInterval(){
   if(feedInterval) clearInterval(feedInterval);
-  const ms = (isVIP && document.getElementById('toggleDelay') && document.getElementById('toggleDelay').checked) ? 5000 : 20000;
+  const ms = (isVIP && toggle0Delay.checked) ? 5000 : 20000;
   feedInterval = setInterval(()=>{
-    // push fake new item
-    const b = BASE_BRANDS[Math.floor(Math.random()*BASE_BRANDS.length)];
+    // add fake new item to front
+    const b = BRANDS[Math.floor(Math.random()*BRANDS.length)];
     const id = Date.now() + Math.floor(Math.random()*1000);
-    const it = {id, title:`${b} Article ${Math.floor(Math.random()*999)}`, brand:b, size:['S','M','L'][Math.floor(Math.random()*3)], cond:'Très bon état', price: `${Math.floor(Math.random()*100)+10}€`, link:'#', image:`https://images.unsplash.com/photo-1520975698519-53c8e7c1a7a6?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=${Math.floor(Math.random()*9999)}`};
+    const it = {id, title:`${b} Article ${Math.floor(Math.random()*999)}`, brand:b, size:['S','M','L'][Math.floor(Math.random()*3)], cond:'Très bon état', price:`${Math.floor(Math.random()*90)+10}€`, link:'#', image:`https://images.unsplash.com/photo-1520975698519-53c8e7c1a7a6?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=${Math.floor(Math.random()*9999)}`};
     items.unshift(it);
-    // if notification best is on, sometimes push into bestArticles
-    if(isVIP && document.getElementById('toggleNotif') && document.getElementById('toggleNotif').checked){
-      if(Math.random() < 0.25) addBestArticle(it);
-    }
-    // keep list reasonably sized
-    if(items.length > 200) items.length = 200;
-    renderItem();
+    if(isVIP && toggleNotifBest.checked && Math.random() < 0.25) simulateBest();
+    if(items.length > 250) items.length = 250;
+    renderCurrent();
   }, ms);
 }
 
-/* ===== initialization & event wiring ===== */
+/* -------------------------
+   Init + wiring events
+   ------------------------- */
 function init(){
-  // basic UI wiring
+  // theme
+  darkToggle.onchange = applyTheme;
+
+  // settings button
   settingsBtn.onclick = ()=> settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
-  darkToggle.onchange = ()=> document.documentElement.classList.toggle('dark');
 
-  // build VIP controls container if not present (compat)
-  const vipBlock = document.createElement('div'); vipBlock.id = 'vipControls'; vipBlock.style.display='none'; // used earlier
-  // actually we already declared vipControls in markup; ensure it's visible when VIP
-  buildBrandChips();
+  // vip dialog
+  openVipBtn.onclick = openVipDialog;
+  vipClose.onclick = ()=> closePopup(vipPopup);
+  cancelVip.onclick = ()=> closePopup(vipPopup);
+  payVip.onclick = ()=> { activateVip(60_000); closePopup(vipPopup); resetFeedInterval(); };
 
-  // click to open VIP popup
-  openVIP.onclick = openVipPopup;
+  // brands popup
+  openBrandsBtn.onclick = ()=> { if(!isVIP){ alert("VIP requis pour les marques préférées."); return; } buildBrandChips(); openPopup(brandsPopup); };
+  brandsClose.onclick = ()=> closePopup(brandsPopup);
+  closeBrands.onclick = ()=> closePopup(brandsPopup);
 
-  // pay inside vip popup is created dynamically
+  // favorites/history openers
+  openFavoritesBtn.onclick = ()=> { renderFavoritesList(); openPopup(favoritesPopup); };
+  openHistoryBtn.onclick = ()=> { renderHistoryList(); openPopup(historyPopup); };
 
-  // bottom controls
-  skipBtn.onclick = skipAction;
-  favBtn.onclick = addFavorite;
-  openVintedBtn.onclick = ()=> {
-    const it = items[idx];
-    if(it) window.open(it.link || '#','_blank');
-  };
+  // popup closes
+  favClose.onclick = ()=> closePopup(favoritesPopup);
+  histClose.onclick = ()=> closePopup(historyPopup);
+  bestClose.onclick = ()=> closePopup(bestPopup);
 
-  // popups close buttons
-  document.getElementById('vipClose')?.onclick = ()=> closePanel(vipPopup);
-  // history/favs popups
-  document.getElementById('histClose')?.onclick = ()=> closePanel(historyPopup);
-  document.getElementById('favClose')?.onclick = ()=> closePanel(favoritesPopup);
-  document.getElementById('bestClose')?.onclick = ()=> closePanel(bestPopup);
+  // clear actions
+  clearFavs.onclick = ()=> { if(!confirm('Supprimer tous les favoris ?')) return; favorites = []; renderFavoritesList(); };
+  clearHistory.onclick = ()=> { if(!confirm('Supprimer tout l\'historique ?')) return; history = []; renderHistoryList(); };
 
-  // view favorites/history buttons in settings (they are shown after VIP)
-  document.getElementById('viewFavorites').onclick = openFavoritesPopup;
-  document.getElementById('viewHistory').onclick = openHistoryPopup;
-  document.getElementById('clearFavs')?.onclick = ()=> { favorites = []; openFavoritesPopup(); };
-  document.getElementById('clearHistory')?.onclick = ()=> { history = []; openHistoryPopup(); };
+  // bottom actions
+  skipBtn.onclick = doSkip;
+  favBtn.onclick = addToFavorites;
+  viewBtn.onclick = ()=> { const it = items[idx]; window.open(it.link || '#','_blank'); };
 
-  // dynamic toggles inside settings may not exist until VIP shows them; add delegated listener:
-  settingsPanel.addEventListener('change', (e)=>{
-    if(e.target && e.target.id === 'toggleDelay'){ resetFeedInterval(); }
-    if(e.target && e.target.id === 'toggleNotif'){ notifBest = !!e.target.checked; }
-    if(e.target && e.target.id === 'toggleFavorites'){ favBtn.style.display = (!!e.target.checked && isVIP) ? 'inline-block' : 'none'; }
-  });
+  // toggles affecting behavior
+  toggle0Delay.onchange = ()=> { resetFeedInterval(); };
+  toggleNotifBest.onchange = ()=> { /* simulate toggle; behavior used elsewhere */ };
+  toggleFavs.onchange = ()=> { favBtn.classList.toggle('hidden', !(isVIP && toggleFavs.checked)); };
 
-  // open/close favorites & history popup close handlers
-  favoritesPopup.querySelector('.close')?.addEventListener('click', ()=> closePanel(favoritesPopup));
-  historyPopup.querySelector('.close')?.addEventListener('click', ()=> closePanel(historyPopup));
-  bestPopup.querySelector('.close')?.addEventListener('click', ()=> closePanel(bestPopup));
+  // clicking outside settings closes it
+  document.addEventListener('click',(e)=>{ if(!settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) settingsPanel.style.display='none'; });
 
-  // wire clear buttons if present
-  const cFav = document.getElementById('clearFavs');
-  if(cFav) cFav.onclick = ()=>{ favorites = []; openFavoritesPopup(); };
-
-  const cHist = document.getElementById('clearHistory');
-  if(cHist) cHist.onclick = ()=>{ history = []; openHistoryPopup(); };
-
-  // initial render
-  renderItem();
+  // initial render & feed
+  renderCurrent();
   resetFeedInterval();
-
-  // make sure clicking outside settings closes it
-  document.addEventListener('click',(e)=>{
-    if(!settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)){
-      settingsPanel.style.display='none';
-    }
-  });
 }
-
-/* ===== popup open helpers (used above) ===== */
-function openFavoritesPopup(){
-  favoritesList.innerHTML = '';
-  if(favorites.length===0) favoritesList.innerHTML = '<div class="small-muted">Aucun favori</div>';
-  else favorites.forEach((it,i)=>{
-    const div = document.createElement('div');
-    div.innerHTML = `<img src="${it.image}" alt=""><div><strong>${it.title}</strong><div class="small-muted">${it.price}</div><div style="margin-top:8px"><button data-i="${i}" class="delFavBtn">Supprimer</button></div></div>`;
-    favoritesList.appendChild(div);
-  });
-  // attach events
-  favoritesList.querySelectorAll('.delFavBtn').forEach(btn=>{
-    btn.onclick = ()=>{ favorites.splice(Number(btn.dataset.i),1); openFavoritesPopup(); };
-  });
-  document.getElementById('clearFavs').onclick = ()=>{ favorites=[]; openFavoritesPopup(); };
-  openPanel(favoritesPopup);
-}
-function openHistoryPopup(){
-  historyList.innerHTML = '';
-  if(history.length===0) historyList.innerHTML = '<div class="small-muted">Aucun historique</div>';
-  else history.forEach((it,i)=>{
-    const div = document.createElement('div');
-    div.innerHTML = `<img src="${it.image}" alt=""><div><strong>${it.title}</strong><div class="small-muted">${it.price}</div><div style="margin-top:8px"><button data-i="${i}" class="delHistBtn">Supprimer</button></div></div>`;
-    historyList.appendChild(div);
-  });
-  historyList.querySelectorAll('.delHistBtn').forEach(btn=>{
-    btn.onclick = ()=>{ history.splice(Number(btn.dataset.i),1); openHistoryPopup(); };
-  });
-  document.getElementById('clearHistory').onclick = ()=>{ history=[]; openHistoryPopup(); };
-  openPanel(historyPopup);
-}
-
-/* ===== start app ===== */
 init();
+
 </script>
 </body>
 </html>
