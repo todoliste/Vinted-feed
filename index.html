@@ -6,148 +6,94 @@
 <title>Vinted Feed - Demo</title>
 <style>
 body {
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-  background: #f5f5f5;
-  color: #333;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s, color 0.3s;
-  min-height: 100vh;
-}
-.dark-mode { background: #121212; color: #f1f1f1; }
-
-header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 60px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
-  background: rgba(255,255,255,0.8);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 1px 5px rgba(0,0,0,0.05);
-  z-index: 100;
-}
-.dark-mode header { background: rgba(25,25,25,0.8); }
-
-.logo {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  font-size: 1rem;
-  gap: 8px;
-}
-.logo img { width: 24px; height: 24px; }
-
-#discord-btn img {
-  width: 28px; height: 28px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.3s;
-  border-radius: 50%;
-}
-#discord-btn img:hover { transform: scale(1.1); }
-.vip-aura { box-shadow: 0 0 12px 3px red; }
-
-#settings {
-  position: fixed;
-  top: 70px;
-  right: 10px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  padding: 12px;
-  width: 240px;
-  display: none;
-  z-index: 99;
-}
-.dark-mode #settings { background: #1f1f1f; color: #fff; }
-
-#settings label { display:block; margin-top:8px; font-size:0.9em; }
-#settings input { margin-right:6px; }
-
-.vip-section { border-top:1px solid #ccc; margin-top:10px; padding-top:8px; }
-.vip-section button {
-  background: linear-gradient(90deg,gold,orange);
-  border:none; color:#fff; border-radius:10px; padding:8px 12px;
-  font-weight:600; cursor:pointer; width:100%;
-}
-.vip-options { margin-top:8px; display:none; }
-.vip-options label { display:block; margin-top:6px; font-size:0.9em; }
-.vip-options select { width:100%; border-radius:8px; padding:4px; border:1px solid #ccc; }
-
-main {
-  margin-top:70px;
-  width:90%;
-  max-width:700px;
+  margin:0;
+  font-family:"Poppins",sans-serif;
+  background:#f5f5f5;
+  color:#333;
   display:flex;
   flex-direction:column;
   align-items:center;
+  transition:background 0.3s,color 0.3s;
+  min-height:100vh;
+}
+.dark-mode{background:#121212;color:#f1f1f1;}
+
+header{
+  position:fixed;top:0;width:100%;height:60px;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 16px;background:rgba(255,255,255,0.8);
+  backdrop-filter:blur(8px);box-shadow:0 1px 5px rgba(0,0,0,0.05);z-index:100;
+}
+.dark-mode header{background:rgba(25,25,25,0.8);}
+
+.logo{display:flex;align-items:center;font-weight:600;font-size:1rem;gap:8px;}
+.logo img{width:24px;height:24px;}
+
+#discord-btn img{
+  width:28px;height:28px;cursor:pointer;
+  transition:transform 0.2s,box-shadow 0.3s;border-radius:50%;
+}
+#discord-btn img:hover{transform:scale(1.1);}
+.vip-aura{box-shadow:0 0 12px 3px red;}
+
+#settings{
+  position:fixed;top:70px;right:10px;background:#fff;border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);padding:12px;width:240px;display:none;z-index:99;
+}
+.dark-mode #settings{background:#1f1f1f;color:#fff;}
+#settings label{display:block;margin-top:8px;font-size:0.9em;}
+#settings input{margin-right:6px;}
+
+.vip-section{border-top:1px solid #ccc;margin-top:10px;padding-top:8px;}
+.vip-section button{
+  background:linear-gradient(90deg,gold,orange);border:none;color:#fff;
+  border-radius:10px;padding:8px 12px;font-weight:600;cursor:pointer;width:100%;
+}
+.vip-options{margin-top:8px;display:none;}
+.vip-options label{display:block;margin-top:6px;font-size:0.9em;}
+.vip-options select{width:100%;border-radius:8px;padding:4px;border:1px solid #ccc;}
+
+main{
+  margin-top:70px;width:90%;max-width:700px;display:flex;flex-direction:column;align-items:center;
 }
 
-.card {
-  display:flex;
-  flex-direction:column;
-  width:100%;
-  background:#fff;
-  border-radius:16px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.08);
-  overflow:hidden;
-  transition:transform 0.3s, background 0.3s;
-  margin-bottom:80px;
+.card{
+  display:flex;flex-direction:column;width:100%;background:#fff;border-radius:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);overflow:hidden;transition:transform 0.5s ease;
+  margin-bottom:80px;position:relative;
 }
-.dark-mode .card { background:#1f1f1f; }
+.dark-mode .card{background:#1f1f1f;}
 
-.card img { width:100%; object-fit:contain; background:#f9f9f9; }
+.card img{width:100%;object-fit:contain;background:#f9f9f9;}
+.card .info{padding:12px;display:flex;flex-direction:column;}
+.info h2{font-size:1.2rem;margin:4px 0;}
+.info p{font-size:0.95rem;margin:2px 0;}
+.price{color:#2f80ed;font-weight:600;font-size:1rem;margin-top:6px;}
 
-.card .info {
-  padding:12px;
-  display:flex;
-  flex-direction:column;
+.btns{position:fixed;bottom:20px;display:flex;gap:10px;}
+button{background:#2f80ed;border:none;padding:10px 20px;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;transition:opacity 0.2s, transform 0.2s;}
+button:hover{opacity:0.9;transform:scale(1.03);}
+#skip-btn{background:#666;}
+#favorite-btn{background:#e74c3c;}
+
+#history-popup,#favorites-popup{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:#fff;padding:12px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.2);
+  width:80%;max-width:400px;display:none;max-height:70%;overflow-y:auto;z-index:200;
 }
-.info h2 { font-size:1.2rem; margin:4px 0; }
-.info p { font-size:0.95rem; margin:2px 0; }
-.price { color:#2f80ed; font-weight:600; font-size:1rem; margin-top:6px; }
-
-.btns {
-  position: fixed;
-  bottom:20px;
-  display:flex;
-  gap:10px;
+.dark-mode #history-popup,.dark-mode #favorites-popup{background:#1f1f1f;color:#fff;}
+.history-item,.favorite-item{display:flex;gap:10px;margin-bottom:8px;align-items:center;}
+.history-item img,.favorite-item img{width:50px;height:50px;object-fit:cover;border-radius:6px;}
+.popup-close{
+  position:absolute;top:6px;right:8px;cursor:pointer;font-weight:bold;font-size:1.2rem;
 }
-button {
-  background:#2f80ed; border:none; padding:10px 20px;
-  border-radius:10px; color:#fff; font-weight:600; cursor:pointer;
-  transition:opacity 0.2s, transform 0.2s;
-}
-button:hover { opacity:0.9; transform:scale(1.03); }
-#skip-btn { background:#666; }
 
-#history-popup {
-  position:fixed;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  background:#fff; padding:12px;
-  border-radius:12px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.2);
-  width:80%; max-width:400px;
-  display:none; max-height:70%; overflow-y:auto; z-index:200;
-}
-.dark-mode #history-popup { background:#1f1f1f; color:#fff; }
-.history-item { display:flex; gap:10px; margin-bottom:8px; }
-.history-item img { width:50px; height:50px; object-fit:cover; border-radius:6px; }
-
-/* Styles PC : image plus grande et texte à droite */
 @media(min-width:700px){
-  .card { flex-direction:row; height:400px; }
-  .card img { width:60%; height:100%; }
-  .card .info { width:40%; justify-content:center; padding:16px; }
-  .info h2 { font-size:1.4rem; }
-  .info p { font-size:1rem; }
+  .card{flex-direction:row;height:400px;}
+  .card img{width:60%;height:100%;}
+  .card .info{width:40%;justify-content:center;padding:16px;}
+  .info h2{font-size:1.4rem;}
+  .info p{font-size:1rem;}
 }
 </style>
 </head>
@@ -170,9 +116,10 @@ button:hover { opacity:0.9; transform:scale(1.03); }
     <h4>⭐ VIP</h4>
     <button id="vip-btn">Devenir VIP</button>
     <div class="vip-options" id="vip-options">
-      <label><input type="checkbox" id="notifToggle"> Notifications articles rare</label>
-      <label><input type="checkbox" id="delayToggle"> 0 Delay (vérif + rapide)</label>
-      <label><input type="checkbox" id="historyToggle"> Historique des articles skip</label>
+      <label><input type="checkbox" id="notifToggle"> Notifications articles rares</label>
+      <label><input type="checkbox" id="delayToggle"> 0 Delay (plus rapide)</label>
+      <label><input type="checkbox" id="historyToggle"> Historique articles skip</label>
+      <label><input type="checkbox" id="favoritesToggle"> Activer favoris</label>
       <label>Marques préférées :</label>
       <select id="brandSelect" multiple>
         <option>Nike</option><option>Adidas</option><option>Gucci</option><option>Balenciaga</option><option>Louis Vuitton</option>
@@ -194,6 +141,7 @@ button:hover { opacity:0.9; transform:scale(1.03); }
       <p id="item-condition"></p>
       <div class="price" id="item-price"></div>
     </div>
+    <button id="favorite-btn" style="position:absolute;top:10px;right:10px;display:none;">❤️</button>
   </div>
   <div class="btns">
     <button id="skip-btn">⏭ Skip</button>
@@ -201,7 +149,8 @@ button:hover { opacity:0.9; transform:scale(1.03); }
   </div>
 </main>
 
-<div id="history-popup"></div>
+<div id="history-popup"><span class="popup-close">✖</span></div>
+<div id="favorites-popup"><span class="popup-close">✖</span></div>
 
 <script>
 const items = [
@@ -214,6 +163,7 @@ const items = [
 let index = 0;
 let isVIP = false;
 let history = [];
+let favorites = [];
 
 function showItem() {
   const item = items[index];
@@ -223,23 +173,34 @@ function showItem() {
   document.getElementById("item-size").textContent = "Taille : " + item.size;
   document.getElementById("item-condition").textContent = "État : " + item.condition;
   document.getElementById("item-price").textContent = item.price;
-  document.getElementById("vinted-btn").onclick = ()=>window.open(item.link, "_blank");
+  document.getElementById("vinted-btn").onclick = ()=>window.open(item.link,"_blank");
+  document.getElementById("favorite-btn").style.display = isVIP && document.getElementById("favoritesToggle").checked ? "block":"none";
 }
 showItem();
 
-document.getElementById("skip-btn").addEventListener("click", ()=>{
-  history.push(items[index]);
-  index = (index + 1) % items.length;
-  showItem();
+function skipItem(){
+  document.getElementById("card").style.transform="translateX(-100%)";
+  setTimeout(()=>{
+    history.push(items[index]);
+    index=(index+1)%items.length;
+    document.getElementById("card").style.transform="translateX(0)";
+    showItem();
+  },300);
+}
+
+document.getElementById("skip-btn").addEventListener("click",skipItem);
+
+document.getElementById("favorite-btn").addEventListener("click",()=>{
+  const item = items[index];
+  if(!favorites.includes(item)) favorites.push(item);
+  alert("Article ajouté aux favoris !");
 });
 
 const discordBtn = document.getElementById("discord-btn");
 const settings = document.getElementById("settings");
-discordBtn.addEventListener("click", ()=> {
-  settings.style.display = (settings.style.display === "block" ? "none" : "block");
-});
+discordBtn.addEventListener("click",()=>{settings.style.display=(settings.style.display==="block"?"none":"block");});
 
-document.getElementById("darkToggle").addEventListener("change", ()=>{
+document.getElementById("darkToggle").addEventListener("change",()=>{
   document.body.classList.toggle("dark-mode");
 });
 
@@ -247,25 +208,28 @@ const vipBtn = document.getElementById("vip-btn");
 const vipOptions = document.getElementById("vip-options");
 const discordLogo = document.getElementById("discord-logo");
 const historyToggle = document.getElementById("historyToggle");
+const favoritesToggle = document.getElementById("favoritesToggle");
 const historyPopup = document.getElementById("history-popup");
+const favoritesPopup = document.getElementById("favorites-popup");
 
-vipBtn.addEventListener("click", ()=>{
-  if (!isVIP) {
-    const confirmPay = confirm("Voulez-vous acheter le VIP pour 0€ (factice) ?");
-    if (confirmPay) {
-      isVIP = true;
-      vipOptions.style.display = "block";
-      vipBtn.textContent = "⭐ VIP Actif";
+vipBtn.addEventListener("click",()=>{
+  if(!isVIP){
+    if(confirm("Voulez-vous acheter le VIP pour 0€ (factice) ?")){
+      isVIP=true;
+      vipOptions.style.display="block";
+      vipBtn.textContent="⭐ VIP Actif";
       discordLogo.classList.add("vip-aura");
       alert("✅ VIP activé !");
+      showItem();
     }
-  } else alert("Tu es déjà VIP !");
+  }else alert("Tu es déjà VIP !");
 });
 
-historyToggle.addEventListener("click", ()=>{
-  if (!isVIP) return;
+// Historique
+historyToggle.addEventListener("click",()=>{
+  if(!isVIP) return;
   if(history.length===0){alert("Aucun article dans l'historique."); return;}
-  historyPopup.innerHTML="<h4>Historique</h4>";
+  historyPopup.innerHTML='<span class="popup-close">✖</span><h4>Historique</h4>';
   history.forEach(it=>{
     const div=document.createElement("div");
     div.className="history-item";
@@ -274,8 +238,11 @@ historyToggle.addEventListener("click", ()=>{
   });
   historyPopup.style.display="block";
 });
-historyPopup.addEventListener("click", ()=>{historyPopup.style.display="none";});
-</script>
+historyPopup.querySelector(".popup-close").addEventListener("click",()=>{historyPopup.style.display="none";});
 
+// Favoris
+favoritesToggle.addEventListener("change",()=>{showItem();});
+favoritesPopup.querySelector(".popup-close").addEventListener("click",()=>{favoritesPopup.style.display="none";});
+</script>
 </body>
 </html>
