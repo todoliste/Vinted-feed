@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Vinted Feed Test</title>
+<style>
+body { font-family: Arial; background-color: #f0f0f0; margin:0; padding:0; }
+body.dark { background-color: #121212; color: #f0f0f0; }
+.card { width: 300px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+body.dark .card { background: #1e1e1e; }
+img { width: 100%; }
+#toggleTheme { position: fixed; top: 10px; right: 10px; }
+</style>
+</head>
+<body>
+<button id="toggleTheme">Toggle Theme</button>
+<div id="cardsContainer"></div>
+
+<script>
+let darkMode = false;
+document.getElementById('toggleTheme').onclick = ()=>{
+  darkMode = !darkMode;
+  document.body.classList.toggle('dark', darkMode);
+}
+
+async function fetchArticles(){
+  try {
+    const res = await fetch('http://localhost:5000/articles');
+    const articles = await res.json();
+    const container = document.getElementById('cardsContainer');
+    articles.forEach(article=>{
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h3>${article.name}</h3>
+        <img src="${article.image}">
+        <p>Prix Vinted: €${article.price_vinted}</p>
+        <p>Prix Revente: €${article.price_ebay}</p>
+        <p>Gain: €${article.gain}</p>
+      `;
+      container.appendChild(card);
+    });
+  } catch(err) {
+    console.error("Erreur lors de la récupération des articles:", err);
+  }
+}
+
+// Charge les 30 premiers articles et ajoute de nouveaux toutes les 30s
+fetchArticles();
+setInterval(fetchArticles, 30000);
+</script>
+</body>
+</html>
