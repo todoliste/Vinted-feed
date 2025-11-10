@@ -1,221 +1,397 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vinted Feed VIP Demo</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vinted Feed - Demo VIP</title>
 <style>
-body{
-  margin:0; font-family:"Poppins",sans-serif; background:#f5f5f5; color:#333; height:100vh;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden;
-  transition: background 0.3s,color 0.3s;
-}
-.dark-mode{background:#121212;color:#f1f1f1;}
+/* --- Base / theme --- */
+:root{--bg:#f5f5f5;--card:#fff;--text:#222;--muted:#777;--accent:#2f80ed}
+body{margin:0;font-family:"Poppins",sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:background .25s,color .25s}
+.dark-mode{--bg:#0b0f18;--card:#0f1720;--text:#e6eef8;--muted:#9aa6bf}
 
-header{
-  position:fixed; top:0;width:100%; height:60px; display:flex; justify-content:space-between; align-items:center;
-  padding:0 16px; background:rgba(255,255,255,0.8); backdrop-filter:blur(8px); box-shadow:0 1px 5px rgba(0,0,0,0.05); z-index:10;
-}
-.dark-mode header{background:rgba(25,25,25,0.8);}
-.logo{display:flex;align-items:center;font-weight:600;font-size:1rem; gap:8px;}
-.logo img{width:24px;height:24px;}
-#discord-btn img{width:28px;height:28px; cursor:pointer; transition:transform 0.2s;}
-#discord-btn img:hover{transform:scale(1.1);}
-#vip-btn{margin-left:12px; padding:6px 12px; background:#2f80ed;color:white;border:none;border-radius:8px;cursor:pointer;}
+/* --- Header --- */
+header{position:fixed;top:0;width:100%;height:60px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);box-shadow:0 1px 6px rgba(0,0,0,0.06);z-index:20}
+.dark-mode header{background:rgba(10,12,18,0.8)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600}
+.logo img{width:26px;height:26px}
+.controls{display:flex;gap:8px;align-items:center}
+.icon-btn{background:var(--card);border:none;padding:8px;border-radius:10px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.06)}
+.icon-btn img{width:20px;height:20px;display:block}
 
-#settings,#vip-popup{
-  position:fixed; top:70px; right:10px; background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.2);
-  padding:12px; width:220px; display:none; z-index:10;
-}
-.dark-mode #settings,.dark-mode #vip-popup{background:#1f1f1f; color:#fff;}
-#settings label,#vip-popup label{display:block; margin-top:8px; font-size:0.9em;}
-#settings input,#vip-popup input{margin-right:6px;width:100%;}
+/* --- Popups / panels --- */
+.panel{position:fixed;top:70px;right:10px;background:var(--card);width:260px;padding:12px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.12);display:none;z-index:30}
+.dark-mode .panel{background:var(--card)}
+.panel h4{margin:0 0 8px 0;font-size:1rem}
+.field{margin:6px 0;font-size:0.9rem}
+.field input[type="number"]{width:100%;padding:8px;border-radius:8px;border:1px solid #ddd}
 
-main{text-align:center; margin-top:60px; width:90%; max-width:400px; position:relative; height:500px;}
-.card{
-  position:absolute;width:100%;border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,0.08); overflow:hidden;
-  transition:transform 0.5s ease,opacity 0.5s ease; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#fff;
-}
-.dark-mode .card{background:#1f1f1f;}
-.card img{width:80%;height:240px;object-fit:contain;background:#f9f9f9;}
-.card .info{padding:12px;text-align:left;}
-.info h2{font-size:1.1rem;margin:4px 0;}
-.info p{font-size:0.9rem;margin:2px 0;}
-.price{color:#2f80ed;font-weight:600;font-size:1rem;margin-top:6px;}
+/* --- Main / cards --- */
+main{margin-top:60px;width:92%;max-width:420px;height:560px;display:flex;align-items:center;justify-content:center;position:relative}
+#cardArea{width:360px;height:480px;position:relative;overflow:visible}
+.card{position:absolute;width:100%;height:100%;border-radius:16px;box-shadow:0 10px 30px rgba(2,6,23,0.12);background:var(--card);display:flex;flex-direction:column;align-items:center;padding:12px;transition:transform .45s ease,opacity .35s}
+.card img{width:86%;height:240px;object-fit:cover;border-radius:10px;background:#fafafa}
+.card .info{width:100%;padding:8px;text-align:left}
+.info h2{font-size:1.05rem;margin:4px 0}
+.info p{font-size:0.9rem;margin:2px 0;color:var(--muted)}
+.price{margin-top:6px;font-weight:700;color:var(--accent)}
 
-.btns{
-  margin-top:16px;
-  display:flex;
-  justify-content:space-around;
-}
-button{
-  background:#2f80ed;
-  border:none;
-  padding:10px 20px;
-  border-radius:10px;
-  color:#fff;
-  font-weight:600;
-  cursor:pointer;
-  transition:opacity 0.2s, transform 0.2s;
-}
-button:hover{opacity:0.9; transform:scale(1.03);}
-#skip-btn{background:#666;}
+/* --- Buttons --- */
+.controls-bottom{margin-top:12px;display:flex;gap:12px;justify-content:center}
+.btn{padding:10px 18px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(47,128,237,0.18)}
+.btn.ghost{background:#6b7280}
+.small{font-size:0.85rem;color:var(--muted)}
 
-#overlay{
-  position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:2000;
+/* --- history list --- */
+.hist-list{max-height:200px;overflow:auto;margin-top:8px;border-top:1px dashed #eee;padding-top:8px}
+.hist-item{padding:6px;border-radius:8px;margin-bottom:6px;background:linear-gradient(90deg,#fff,#fbfbfb);font-size:0.9rem}
+.dark-mode .hist-item{background:linear-gradient(90deg,#13151a,#111214)}
+
+/* responsive */
+@media(max-width:420px){
+  #cardArea{width:320px;height:460px}
+  .panel{right:6px;width:92%}
 }
-.loginCard{background:#fff; padding:20px; border-radius:12px; width:300px; text-align:center; box-shadow:0 12px 40px rgba(0,0,0,0.4);}
-.dark-mode .loginCard{background:#1f1f1f; color:#fff;}
-.loginCard button{margin-top:12px;padding:8px 12px;border-radius:8px;border:none;background:#5865f2;color:white;cursor:pointer;}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">
-    <img src="https://cdn-icons-png.flaticon.com/512/925/925123.png" alt="Vêtements"> Vinted Feed
+    <img src="https://cdn-icons-png.flaticon.com/512/925/925123.png" alt="logo">
+    Vinted Feed
   </div>
-  <div>
-    <button id="vip-btn">VIP</button>
-    <div id="discord-btn">
-      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord">
-    </div>
+  <div class="controls">
+    <button id="vipBtn" class="icon-btn">VIP</button>
+    <button id="paramsBtn" class="icon-btn" title="Paramètres">⚙️</button>
+    <button id="discordBtn" class="icon-btn" title="Connexion Discord (simulé)"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="discord"></button>
   </div>
 </header>
 
-<div id="overlay">
-  <div class="loginCard">
-    <h3>Connexion via Discord</h3>
-    <p>Simulation pour récupérer pseudo et avatar</p>
-    <button id="loginBtn">Se connecter</button>
+<!-- Overlay login simulé (obligatoire au premier lancement) -->
+<div id="overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:50">
+  <div style="background:var(--card);padding:20px;border-radius:12px;text-align:center;width:320px;box-shadow:0 12px 40px rgba(0,0,0,0.4)">
+    <h3>Se connecter via Discord</h3>
+    <p class="small">Simulation : clic sur "Se connecter" pour continuer</p>
+    <div style="margin-top:14px">
+      <button id="connectBtn" class="btn">Se connecter</button>
+    </div>
   </div>
 </div>
 
-<div id="settings">
+<!-- Paramètres -->
+<div id="paramsPanel" class="panel">
   <h4>Paramètres</h4>
-  <label><input type="checkbox" id="darkToggle"> Mode sombre</label>
+  <div class="field"><label><input type="checkbox" id="darkToggle"> Mode sombre</label></div>
+  <div class="field"><label><input type="checkbox" id="allBrands"> Toutes marques</label></div>
+  <div class="field"><label>Seuil gain min (€)<input id="gainMin" type="number" value="20"></label></div>
+  <div class="field small">Choisir marques (ex : Nike)</div>
+  <div id="brandsBox" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
 </div>
 
-<div id="vip-popup">
-  <h4>VIP - Fonctionnalités</h4>
-  <label><input type="checkbox" id="vipPaid"> Payer VIP (simulé)</label>
-  <h5>Marques préférées</h5>
-  <div id="brandsList"></div>
-  <label><input type="checkbox" id="allBrands"> Toutes marques</label>
-  <label><input type="checkbox" id="zeroDelay"> 0 Delay</label>
-  <label><input type="checkbox" id="notifications"> Notifications</label>
-  <label><input type="checkbox" id="historyToggle"> Historique des skips</label>
+<!-- VIP popup -->
+<div id="vipPanel" class="panel" style="width:320px">
+  <h4>VIP (simulé)</h4>
+  <div class="field"><label><input type="checkbox" id="vipPaid"> Payer VIP (simulation)</label></div>
+  <div class="field"><label><input type="checkbox" id="zeroDelay"> 0 Delay (mode rapide)</label></div>
+  <div class="field"><label><input type="checkbox" id="notifyToggle"> Notifications pour bonnes affaires</label></div>
+  <div class="field"><label><input type="checkbox" id="historyToggle"> Garder historique des skips</label></div>
+  <div class="field small">Historique:</div>
+  <div id="historyBox" class="hist-list"></div>
 </div>
 
 <main>
-  <div id="cardContainer"></div>
-  <div class="btns">
-    <button id="skip-btn">⏭ Skip</button>
-    <button id="vinted-btn">🛍 Voir sur Vinted</button>
+  <div id="cardArea" aria-live="polite">
+    <!-- Cartes empilées -->
+    <div id="emptyMsg" style="color:var(--muted);text-align:center">Connectez-vous pour afficher le feed</div>
+  </div>
+
+  <div class="controls-bottom" style="margin-top:18px">
+    <button id="skipBtn" class="btn ghost">⏭ Skip</button>
+    <button id="openVinted" class="btn">🛍 Voir sur Vinted</button>
   </div>
 </main>
 
 <script>
-// === Variables ===
-const brands=["Nike","Adidas","Ralph Lauren","CP Company","Puma","Reebok","Under Armour","New Balance","Converse","Vans","The North Face","Columbia","Patagonia","Fila","Champion","Tommy Hilfiger","Lacoste","Jordan","Asics","Carhartt"];
-const brandsListEl=document.getElementById('brandsList');
-const selectedBrands=new Set(brands);
-let allBrandsChecked=false;
-let index=0;
-let items=[],historyItems=[]; // cartes et skip historique
-let currentUser=null;
-let vipUnlocked=false;
-let zeroDelay=false;
-const cardContainer=document.getElementById('cardContainer');
+/* ==== Données & état ==== */
+const BRAND_LIST = ["Nike","Adidas","Ralph Lauren","CP Company","Puma","Reebok","Under Armour","New Balance","Converse","Vans","The North Face","Columbia","Patagonia","Fila","Champion","Tommy Hilfiger","Lacoste","Jordan","Asics","Carhartt"];
+let selectedBrands = new Set(BRAND_LIST); // activées par défaut
+let allBrands = true;
+let items = [];            // pile d'articles (nouveaux ajoutés à la fin)
+let history = [];          // skips si historyToggle activé
+let vip = false;
+let zeroDelay = false;
+let notifyEnabled = false;
+let gainMin = 20;
+let connected = false;
+const MAX_CARDS = 30;
 
-// === Créer boutons marques ===
-brands.forEach(b=>{
-  const btn=document.createElement('label');
-  btn.innerHTML=`<input type="checkbox" value="${b}" checked> ${b}`;
-  btn.querySelector('input').addEventListener('change',(e)=>{
-    if(e.target.checked) selectedBrands.add(b);
-    else selectedBrands.delete(b);
+/* ==== éléments ==== */
+const overlay = document.getElementById('overlay');
+const cardArea = document.getElementById('cardArea');
+const paramsBtn = document.getElementById('paramsBtn');
+const paramsPanel = document.getElementById('paramsPanel');
+const vipBtn = document.getElementById('vipBtn');
+const vipPanel = document.getElementById('vipPanel');
+const connectBtn = document.getElementById('connectBtn');
+const skipBtn = document.getElementById('skipBtn');
+const openVinted = document.getElementById('openVinted');
+const brandsBox = document.getElementById('brandsBox');
+const historyBox = document.getElementById('historyBox');
+const gainMinEl = document.getElementById('gainMin');
+
+/* ==== helpers ==== */
+function genArticle(i){
+  const brand = BRAND_LIST[Math.floor(Math.random()*BRAND_LIST.length)];
+  const title = `${brand} Article ${Math.floor(Math.random()*9999)}`;
+  const priceV = Math.floor(Math.random()*120)+5; // 5..124
+  const priceE = priceV + Math.floor(Math.random()*300)+10;
+  const gain = priceE - priceV;
+  return {id:`a-${Date.now()}-${i}`,brand,title,priceV,priceE,gain,image:`https://via.placeholder.com/640x420?text=${encodeURIComponent(brand)}`,link:`https://vinted.example/${encodeURIComponent(title)}`};
+}
+function notify(str){ if(notifyEnabled && "Notification" in window && Notification.permission==="granted"){ new Notification("VintedFeed", {body: str}); } }
+
+/* ==== UI initialisation ==== */
+// créé boutons marques
+BRAND_LIST.forEach(b=>{
+  const btn = document.createElement('button');
+  btn.textContent = b;
+  btn.className = 'icon-btn';
+  btn.style.padding = '6px 10px';
+  btn.style.fontSize = '0.9rem';
+  btn.style.borderRadius = '8px';
+  btn.style.border = '1px solid rgba(0,0,0,0.06)';
+  btn.style.background = '#fff';
+  btn.style.cursor = 'pointer';
+  btn.onclick = ()=>{
+    if(selectedBrands.has(b)){ selectedBrands.delete(b); btn.style.opacity = 0.45; allBrands = false; document.getElementById('allBrands').checked = false; }
+    else { selectedBrands.add(b); btn.style.opacity = 1; }
     renderStack();
-  });
-  brandsListEl.appendChild(btn);
+  };
+  brandsBox.appendChild(btn);
 });
 
-// === Cases spéciales ===
-document.getElementById('allBrands').addEventListener('change', e=>{
-  allBrandsChecked=e.target.checked;
-  if(allBrandsChecked){
-    brands.forEach(b=>selectedBrands.add(b));
-  }
+/* ==== connexion simulée ==== */
+connectBtn.addEventListener('click', ()=>{
+  connected = true;
+  overlay.style.display = 'none';
+  startFeed();
+});
+
+/* ==== panels toggles ==== */
+paramsBtn.addEventListener('click', ()=> paramsPanel.style.display = paramsPanel.style.display === 'flex' ? 'none' : 'flex');
+vipBtn.addEventListener('click', ()=> vipPanel.style.display = vipPanel.style.display === 'flex' ? 'none' : 'flex');
+
+/* dark mode toggle */
+document.getElementById('darkToggle').addEventListener('change', (e)=> document.body.classList.toggle('dark-mode'));
+
+/* all brands */
+document.getElementById('allBrands').addEventListener('change', (e)=>{
+  allBrands = e.target.checked;
+  if(allBrands){ selectedBrands = new Set(BRAND_LIST); Array.from(brandsBox.children).forEach(b=>b.style.opacity=1); }
   renderStack();
 });
 
-// === Login simulé ===
-document.getElementById('loginBtn').onclick=()=>{
-  currentUser={name:'Exemple#1234'};
-  document.getElementById('overlay').style.display='none';
-  initFeed();
-};
-
-// === VIP simulé ===
-document.getElementById('vip-btn').onclick=()=>{ document.getElementById('vip-popup').style.display='block'; };
-document.getElementById('vipPaid').addEventListener('change', e=>{
-  vipUnlocked=e.target.checked;
-});
-
-// === Dark mode ===
-document.getElementById('darkToggle').addEventListener('change', ()=>{
-  document.body.classList.toggle("dark-mode");
-});
-
-// === Génération aléatoire d'article ===
-function generateArticle(i){
-  const brand=brands[Math.floor(Math.random()*brands.length)];
-  const priceV=Math.floor(Math.random()*90)+10;
-  const priceE=priceV+Math.floor(Math.random()*200)+10;
-  const gain=priceE-priceV;
-  return {id:'a-'+Date.now()+'-'+i,title:`${brand} Article ${Math.floor(Math.random()*999)}`,brand,priceV,priceE,gain,image:`https://via.placeholder.com/320x200?text=${encodeURIComponent(brand)}`};
-}
-
-// === Initialiser le feed ===
-function initFeed(){
-  items=[];
-  for(let i=0;i<10;i++) items.push(generateArticle(i));
+/* gain min change */
+gainMinEl.addEventListener('change', ()=>{
+  gainMin = parseInt(gainMinEl.value) || 0;
   renderStack();
-  if(vipUnlocked && zeroDelay){
-    setInterval(()=>{ items.push(generateArticle(Date.now())); renderStack(); },5000);
-  }else{
-    setInterval(()=>{ items.push(generateArticle(Date.now())); renderStack(); },30000);
+});
+
+/* VIP toggles */
+document.getElementById('vipPaid').addEventListener('change', (e)=>{
+  vip = e.target.checked;
+  if(vip){ /* unlock UI if needed */ }
+});
+document.getElementById('zeroDelay').addEventListener('change',(e)=>{
+  zeroDelay = e.target.checked;
+  // adjust interval by restarting feed
+  resetFeedInterval();
+});
+document.getElementById('notifyToggle').addEventListener('change',(e)=>{
+  notifyEnabled = e.target.checked;
+  if(notifyEnabled && Notification && Notification.permission !== "granted"){
+    Notification.requestPermission();
   }
+});
+document.getElementById('historyToggle').addEventListener('change',(e)=>{
+  // nothing immediate, history recorded on skip if toggled
+});
+
+/* ==== feed logic ==== */
+let feedInterval = null;
+function startFeed(){
+  // preload ~10 articles
+  for(let i=0;i<10;i++) items.push(genArticle(i));
+  renderStack();
+  resetFeedInterval();
+}
+function resetFeedInterval(){
+  if(feedInterval) clearInterval(feedInterval);
+  const ms = (vip && zeroDelay) ? 5000 : 30000;
+  feedInterval = setInterval(()=>{
+    // push a few articles (respect MAX)
+    if(items.length < MAX_CARDS) {
+      items.push(genArticle(Date.now()%1000));
+      // auto-notify if very good gain > X
+      const last = items[items.length-1];
+      if(notifyEnabled && last.gain >= Math.max(50, gainMin+30)) notify(`${last.brand}: gain estimé ${last.gain}€`);
+    }
+    renderStack();
+  }, ms);
 }
 
-// === Rendu cartes filtrées ===
+/* filter + get visible stack */
+function getFiltered(){
+  const filtered = items.filter(it => (allBrands || selectedBrands.has(it.brand)) && it.gain >= gainMin);
+  return filtered.slice(0, MAX_CARDS);
+}
+
+/* render stack: show top card centered, others hidden (we animate in/out) */
 function renderStack(){
-  cardContainer.innerHTML='';
-  const filtered=allBrandsChecked?items:items.filter(it=>selectedBrands.has(it.brand));
-  if(filtered.length===0){cardContainer.innerHTML='<div style="color:#888">Aucun article</div>'; return;}
-  const top=filtered[0];
-  const card=document.createElement('div');
-  card.className='card';
-  card.innerHTML=`<img src="${top.image}"><div class="info"><h2>${top.title}</h2><p>Marque: ${top.brand}</p><div class="price">€${top.priceV} · Gain: €${top.gain}</div></div>`;
-  cardContainer.appendChild(card);
+  cardArea.innerHTML = '';
+  if(!connected){ cardArea.innerHTML = `<div style="color:var(--muted);text-align:center">Connectez-vous pour afficher le feed</div>`; return; }
+  const stack = getFiltered();
+  if(stack.length === 0){ cardArea.innerHTML = `<div style="color:var(--muted);text-align:center">Aucun article (changez filtres)</div>`; return; }
+
+  // render top card (we'll always render only the first two for performance + animation)
+  for(let i = Math.min(1, stack.length-1); i >= 0; i--){
+    const art = stack[i];
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.style.zIndex = 200 + (1 - i);
+    // position: top (i==0) center, second off-right to slide in
+    if(i === 0){
+      el.style.transform = 'translateX(0)';
+      el.style.opacity = '1';
+    } else {
+      el.style.transform = 'translateX(1000px)';
+      el.style.opacity = '0.95';
+    }
+    el.innerHTML = `
+      <img src="${art.image}" alt="${art.title}">
+      <div class="info">
+        <h2>${art.title}</h2>
+        <p>Marque: ${art.brand}</p>
+        <p class="small">Prix Vinted: €${art.priceV} · Est. revente: €${art.priceE}</p>
+        <div class="price">Gain estimé: €${art.gain}</div>
+      </div>
+    `;
+    cardArea.appendChild(el);
+  }
+  // update current index reference by pointing to the first filtered item in 'items'
+  const top = stack[0];
+  // set openVinted link
+  openVinted.onclick = ()=> window.open(top.link, '_blank');
 }
 
-// === Swipe ===
-function swipe(){
-  if(items.length===0) return;
-  const card=cardContainer.querySelector('.card');
-  card.style.transform='translateX(-1000px)';
-  card.style.opacity='0';
-  historyItems.push(items.shift());
-  setTimeout(renderStack,400);
+/* swipe left (skip): animate then remove that article from items, add to history if enabled */
+function swipeLeft(){
+  const cards = cardArea.querySelectorAll('.card');
+  if(cards.length === 0) return;
+  const top = cards[0];
+  top.style.transition = 'transform .45s ease, opacity .3s';
+  top.style.transform = 'translateX(-1200px) rotate(-10deg)';
+  top.style.opacity = '0';
+  // find which article it was
+  const filtered = getFiltered();
+  const art = filtered[0];
+  // remove from items after animation
+  setTimeout(()=>{
+    // remove the first occurrence in items with same id
+    const idx = items.findIndex(it=>it.id === art.id);
+    if(idx !== -1) items.splice(idx,1);
+    if(document.getElementById('historyToggle').checked){
+      history.unshift(art);
+      renderHistory();
+    }
+    renderStack();
+  },450);
 }
 
-// === Boutons ===
-document.getElementById('skip-btn').addEventListener('click', swipe);
-document.getElementById('vinted-btn').addEventListener('click', ()=>{
-  if(items.length>0) window.open('#','_blank');
+/* swipe right (keep): animate right then remove */
+function swipeRight(){
+  const cards = cardArea.querySelectorAll('.card');
+  if(cards.length === 0) return;
+  const top = cards[0];
+  top.style.transition = 'transform .45s ease, opacity .3s';
+  top.style.transform = 'translateX(1200px) rotate(10deg)';
+  top.style.opacity = '0';
+  const filtered = getFiltered();
+  const art = filtered[0];
+  setTimeout(()=>{
+    const idx = items.findIndex(it=>it.id === art.id);
+    if(idx !== -1) items.splice(idx,1);
+    // "kept" items could be stored elsewhere if desired
+    renderStack();
+  },450);
+}
+
+/* render history list */
+function renderHistory(){
+  historyBox.innerHTML = '';
+  history.slice(0,50).forEach(h => {
+    const div = document.createElement('div');
+    div.className = 'hist-item';
+    div.textContent = `${h.brand} · ${h.title} · gain ${h.gain}€`;
+    historyBox.appendChild(div);
+  });
+}
+
+/* buttons */
+skipBtn.addEventListener('click', swipeLeft);
+openVinted.addEventListener('click', ()=> {
+  // open set in renderStack via openVinted onclick set earlier
 });
-document.getElementById('zeroDelay').addEventListener('change', e=>zeroDelay=e.target.checked);
+
+/* keyboard left/right */
+document.addEventListener('keydown', e=>{
+  if(e.key === 'ArrowLeft') swipeLeft();
+  if(e.key === 'ArrowRight') swipeRight();
+});
+
+/* initial small seed */
+for(let i=0;i<12;i++) items.push(genSeed(i));
+function genSeed(i){
+  return genArticle(i);
+}
+function genArticle(i){ // wrapper to match names above
+  return (function(){
+    const brand = BRAND_LIST[Math.floor(Math.random()*BRAND_LIST.length)];
+    const title = `${brand} Article ${Math.floor(Math.random()*9999)}`;
+    const priceV = Math.floor(Math.random()*120)+5;
+    const priceE = priceV + Math.floor(Math.random()*300)+10;
+    const gain = priceE - priceV;
+    return {id:`a-${Date.now()}-${i}`,brand,title,priceV,priceE,gain,image:`https://via.placeholder.com/640x420?text=${encodeURIComponent(brand)}`,link:`https://vinted.example/${encodeURIComponent(title)}`};
+  })();
+}
+
+/* expose VIP toggles (0delay etc) */
+document.getElementById('zeroDelay').addEventListener('change', (e)=>{ zeroDelay = e.target.checked; resetFeedInterval(); });
+document.getElementById('vipPaid').addEventListener('change', (e)=>{ vip = e.target.checked; });
+document.getElementById('notifyToggle').addEventListener('change', (e)=>{ notifyEnabled = e.target.checked; if(notifyEnabled && Notification && Notification.permission!=="granted") Notification.requestPermission(); });
+
+/* start interval helper */
+function resetFeedInterval(){
+  if(window._feedInterval) clearInterval(window._feedInterval);
+  const ms = (vip && zeroDelay) ? 5000 : 30000;
+  window._feedInterval = setInterval(()=>{
+    if(items.length < 150) items.push(genArticle(Date.now()%1000));
+    // auto-notify for very profitable items
+    const last = items[items.length-1];
+    if(notifyEnabled && last.gain >= Math.max(60, gainMin + 40)) notify(`Bon deal: ${last.brand} +${last.gain}€`);
+    renderStack();
+  }, ms);
+}
+
+/* first render (overlay visible until connect) */
+renderStack();
+
+/* small helpers to keep UI tidy: when closing panels click outside */
+document.addEventListener('click', (e)=>{
+  if(!paramsPanel.contains(e.target) && e.target !== paramsBtn) paramsPanel.style.display='none';
+  if(!vipPanel.contains(e.target) && e.target !== vipBtn) vipPanel.style.display='none';
+});
 </script>
 </body>
 </html>
