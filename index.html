@@ -2,167 +2,205 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vinted Feed Demo Minimaliste</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinted Feed - Demo</title>
 <style>
-:root{
-  --bg:#f0f2f5; --card:#ffffff; --text:#0f1720; --muted:#6b7280;
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: #f5f5f5;
+  color: #333;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s, color 0.3s;
 }
-body.dark{ --bg:#0b1020; --card:#0f1720; --text:#e6eef8; --muted:#9aa6bf; }
-body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;}
-#cardArea{position:relative;width:360px;height:480px;}
-.card{position:absolute;width:100%;height:100%;background:var(--card);border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.12);display:flex;flex-direction:column;align-items:center;padding:12px;justify-content:center;transition:transform 0.4s ease,opacity 0.3s;}
-.card img{width:80%;height:200px;object-fit:cover;border-radius:8px;}
-.card h3{margin:8px 0 4px;font-size:18px;text-align:center;}
-.card .meta{font-size:14px;color:var(--muted);text-align:center;}
-#paramsBtn{position:absolute;top:12px;right:12px;padding:6px 10px;border-radius:8px;border:none;background:#5865f2;color:white;cursor:pointer;z-index:1000;}
-#paramsPopup{position:absolute;top:50px;right:12px;width:220px;background:var(--card);padding:12px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.2);display:none;flex-direction:column;z-index:1000;}
-.brand-btn{display:block;margin-bottom:6px;padding:6px;border-radius:6px;border:1px solid rgba(0,0,0,0.06);cursor:pointer;background:transparent;}
-.brand-btn.active{background:#2227ff10;border-color:#2227ff50;}
-input[type="number"]{width:100%;padding:6px;border-radius:6px;border:1px solid rgba(0,0,0,0.08);margin-bottom:12px;}
-#overlay{position:fixed;inset:0;background:rgba(2,6,23,0.55);display:flex;align-items:center;justify-content:center;z-index:2000;}
-.loginCard{background:var(--card);padding:20px;border-radius:12px;width:320px;box-shadow:0 12px 40px rgba(0,0,0,0.4);text-align:center;}
-.loginCard button{margin-top:12px;padding:8px 12px;border-radius:8px;border:none;background:#5865f2;color:white;cursor:pointer;}
-#toggleTheme{margin-top:6px;padding:4px 8px;border-radius:6px;border:none;background:var(--card);cursor:pointer;}
+.dark-mode { background: #121212; color: #f1f1f1; }
+
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+}
+.dark-mode header { background: rgba(25,25,25,0.8); }
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1rem;
+  gap: 8px;
+}
+.logo img { width: 24px; height: 24px; }
+
+#discord-btn img {
+  width: 28px; height: 28px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+#discord-btn img:hover { transform: scale(1.1); }
+
+#settings {
+  position: fixed;
+  top: 70px;
+  right: 10px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  padding: 12px;
+  width: 200px;
+  display: none;
+}
+.dark-mode #settings { background: #1f1f1f; color: #fff; }
+
+#settings label {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.9em;
+}
+#settings input { margin-right: 6px; }
+
+main {
+  text-align: center;
+  margin-top: 60px;
+  width: 90%;
+  max-width: 400px;
+}
+.card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: transform 0.3s, background 0.3s;
+}
+.dark-mode .card { background: #1f1f1f; }
+
+.card img {
+  width: 100%;
+  height: 240px;
+  object-fit: contain;
+  background: #f9f9f9;
+}
+.card .info {
+  padding: 12px;
+  text-align: left;
+}
+.info h2 {
+  font-size: 1.1rem;
+  margin: 4px 0;
+}
+.info p {
+  font-size: 0.9rem;
+  margin: 2px 0;
+}
+.price {
+  color: #2f80ed;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 6px;
+}
+
+.btns {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-around;
+}
+button {
+  background: #2f80ed;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+button:hover { opacity: 0.9; transform: scale(1.03); }
+#skip-btn { background: #666; }
+
 </style>
 </head>
 <body>
 
-<!-- Overlay login simulé -->
-<div id="overlay">
-  <div class="loginCard">
-    <h3>Connexion via le bot</h3>
-    <p>Simulation Discord pour la démo</p>
-    <button id="loginBtn">Se connecter</button>
+<header>
+  <div class="logo">
+    <img src="https://cdn-icons-png.flaticon.com/512/925/925123.png" alt="Vêtements">
+    Vinted Feed
   </div>
+  <div id="discord-btn">
+    <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord">
+  </div>
+</header>
+
+<div id="settings">
+  <h4>Paramètres</h4>
+  <label><input type="checkbox" id="darkToggle"> Mode sombre</label>
+  <label><input type="text" placeholder="Pseudo Discord"></label>
 </div>
 
-<!-- Bouton paramètres -->
-<button id="paramsBtn">⚙️ Paramètres</button>
-<div id="paramsPopup">
-  <h4>Marques préférées</h4>
-  <div id="brandsList"></div>
-  <h4>Seuil gain (€)</h4>
-  <input type="number" id="minGain" value="20" min="0">
-  <button id="toggleTheme">Mode Sombre</button>
-</div>
-
-<!-- Zone cartes -->
-<div id="cardArea">
-  <div style="text-align:center;color:var(--muted);">Veuillez vous connecter via le bot pour voir les articles.</div>
-</div>
+<main>
+  <div class="card" id="card">
+    <img id="item-img" src="" alt="Article">
+    <div class="info">
+      <h2 id="item-title"></h2>
+      <p id="item-brand"></p>
+      <p id="item-size"></p>
+      <p id="item-condition"></p>
+      <div class="price" id="item-price"></div>
+    </div>
+  </div>
+  <div class="btns">
+    <button id="skip-btn">⏭ Skip</button>
+    <button id="vinted-btn">🛍 Voir sur Vinted</button>
+  </div>
+</main>
 
 <script>
-// ===== Variables =====
-const brands=["Nike","Adidas","Ralph Lauren","CP Company","Puma","Reebok","Under Armour","New Balance","Converse","Vans","The North Face","Columbia","Patagonia","Fila","Champion","Tommy Hilfiger","Lacoste","Jordan","Asics","Carhartt"];
-const brandsListEl=document.getElementById('brandsList');
-const selectedBrands=new Set(brands);
-let cardStack=[],currentUser=null;
-const MAX_CARDS=30;
-const cardArea=document.getElementById('cardArea');
-const minGainInput=document.getElementById('minGain');
-const overlay=document.getElementById('overlay');
-const paramsBtn=document.getElementById('paramsBtn');
-const paramsPopup=document.getElementById('paramsPopup');
+const items = [
+  {title:"Sweat Nike Tech", brand:"Nike", size:"M", condition:"Très bon état", price:"45€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+  {title:"T-shirt Dior logo", brand:"Dior", size:"L", condition:"Neuf", price:"90€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+  {title:"Jean Levi's 501", brand:"Levi's", size:"42", condition:"Bon état", price:"55€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+  {title:"Veste Zara beige", brand:"Zara", size:"S", condition:"Très bon état", price:"35€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+];
 
-// ===== Création des boutons marques =====
-brands.forEach(b=>{
-  const btn=document.createElement('button');
-  btn.textContent=b; btn.className='brand-btn active';
-  btn.onclick=()=>{
-    if(btn.classList.contains('active')){btn.classList.remove('active');selectedBrands.delete(b);}
-    else{btn.classList.add('active');selectedBrands.add(b);}
-    refillCards();
-  };
-  brandsListEl.appendChild(btn);
+let index = 0;
+function showItem() {
+  const item = items[index];
+  document.getElementById("item-img").src = item.image;
+  document.getElementById("item-title").textContent = item.title;
+  document.getElementById("item-brand").textContent = "Marque : " + item.brand;
+  document.getElementById("item-size").textContent = "Taille : " + item.size;
+  document.getElementById("item-condition").textContent = "État : " + item.condition;
+  document.getElementById("item-price").textContent = item.price;
+  document.getElementById("vinted-btn").onclick = ()=>window.open(item.link, "_blank");
+}
+showItem();
+
+document.getElementById("skip-btn").addEventListener("click", ()=>{
+  index = (index + 1) % items.length;
+  showItem();
 });
 
-// ===== Toggle paramètres =====
-paramsBtn.onclick=()=>{paramsPopup.style.display=paramsPopup.style.display==='flex'?'none':'flex';paramsPopup.style.flexDirection='column';};
-
-// ===== Mode sombre =====
-document.getElementById('toggleTheme').onclick=()=>{
-  document.body.classList.toggle('dark');
-  document.getElementById('toggleTheme').textContent=document.body.classList.contains('dark')?'Mode Clair':'Mode Sombre';
-};
-
-// ===== Login simulé =====
-document.getElementById('loginBtn').onclick=()=>{
-  currentUser={name:'exemple#1234'};
-  overlay.style.display='none';
-  refillCards();
-};
-
-// ===== Génération article aléatoire =====
-function generateArticle(i){
-  const brand=brands[Math.floor(Math.random()*brands.length)];
-  const price_vinted=Math.floor(Math.random()*90)+10;
-  const price_ebay=price_vinted+Math.floor(Math.random()*200)+10;
-  const gain=price_ebay-price_vinted;
-  return {id:'a-'+Date.now()+'-'+i,name:`${brand} Article ${Math.floor(Math.random()*9999)}`,brand,price_vinted,price_ebay,gain,image:`https://via.placeholder.com/320x200?text=${encodeURIComponent(brand)}`};
-}
-
-// ===== Affichage cartes =====
-function refillCards(){
-  if(!currentUser) return;
-  cardStack=[];
-  const mg=parseInt(minGainInput.value)||20;
-  let tries=0;
-  while(cardStack.length<MAX_CARDS && tries<MAX_CARDS*6){
-    const a=generateArticle(tries);
-    if(selectedBrands.has(a.brand)&&a.gain>=mg) cardStack.push(a);
-    tries++;
-  }
-  renderStack();
-}
-function renderStack(){
-  cardArea.innerHTML='';
-  if(cardStack.length===0){cardArea.innerHTML='<div style="color:var(--muted);text-align:center;">Aucun article trouvé</div>'; return;}
-  for(let i=cardStack.length-1;i>=0;i--){
-    const art=cardStack[i];
-    const el=document.createElement('div');
-    el.className='card'; el.dataset.id=art.id;
-    el.style.zIndex=100+i; el.style.transform=`translateX(${i===0?0:1000}px)`; // top card center, others out right
-    el.innerHTML=`<img src="${art.image}" alt="${art.name}"><h3>${art.name}</h3><div class="meta">${art.brand}</div><div class="meta">Prix: €${art.price_vinted} · Gain: €${art.gain}</div>`;
-    cardArea.appendChild(el);
-  }
-  // animation entrée
-  const top=cardArea.querySelector('.card');
-  if(top) top.style.transform='translateX(0)';
-}
-
-// ===== Swipe =====
-function swipe(direction){
-  if(cardStack.length===0) return;
-  const topCard=cardArea.querySelector('.card');
-  topCard.style.transition='transform 0.4s ease, opacity 0.3s';
-  topCard.style.transform=`translateX(${direction*1000}px) rotate(${direction*10}deg)`;
-  topCard.style.opacity='0';
-  setTimeout(()=>{
-    cardStack.shift();
-    addNewArticles(1);
-    renderStack();
-  },400);
-}
-function addNewArticles(n){
-  const mg=parseInt(minGainInput.value)||20; let tries=0;
-  while(n>0&&tries<200){
-    const a=generateArticle(tries);
-    if(selectedBrands.has(a.brand)&&a.gain>=mg){cardStack.push(a); n--;}
-    tries++;
-  }
-}
-
-// ===== Clavier support =====
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowLeft') swipe(-1);
-  else if(e.key==='ArrowRight') swipe(1);
+const discordBtn = document.getElementById("discord-btn");
+const settings = document.getElementById("settings");
+discordBtn.addEventListener("click", ()=> {
+  settings.style.display = (settings.style.display === "block" ? "none" : "block");
 });
 
-// ===== Update périodique =====
-setInterval(()=>{if(!currentUser) return; addNewArticles(1); renderStack();},30000);
-
-// ===== Touch buttons (optionnel pour mobile) =====
+document.getElementById("darkToggle").addEventListener("change", ()=>{
+  document.body.classList.toggle("dark-mode");
+});
 </script>
+
 </body>
 </html>
