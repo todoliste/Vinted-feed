@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vin+</title>
+<title>Vinted Feed - VIP Demo</title>
 <style>
 body {
   margin: 0;
@@ -24,20 +24,17 @@ header {
   width: 100%;
   height: 60px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 0 16px;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.8);
   backdrop-filter: blur(8px);
   box-shadow: 0 1px 5px rgba(0,0,0,0.05);
   z-index: 100;
 }
-.dark-mode header { background: rgba(25,25,25,0.9); }
+.dark-mode header { background: rgba(25,25,25,0.8); }
 
-#settings-toggle {
-  cursor:pointer;
-  font-size: 1.5rem;
-}
+.logo { display: flex; align-items: center; font-weight: 600; font-size: 1rem; gap: 8px; cursor:pointer; }
 
 #settings {
   position: fixed;
@@ -47,7 +44,7 @@ header {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   padding: 12px;
-  width: 260px;
+  width: 280px;
   display: none;
   z-index: 99;
 }
@@ -69,7 +66,6 @@ main {
   flex-direction:column;
   align-items:center;
 }
-
 .card {
   display:flex;
   flex-direction:column;
@@ -93,13 +89,13 @@ main {
   justify-content:center;
   gap:10px;
   margin-top:12px;
-  flex-wrap:wrap;
+  flex-wrap: wrap;
 }
 button { cursor:pointer; padding:10px 20px; border:none; border-radius:10px; font-weight:600; transition:0.2s; }
 button:hover { opacity:0.9; transform:scale(1.03); }
 #skip-btn { background:#666; color:#fff; }
 #favorite-btn { background:#e74c3c; color:#fff; }
-#vinted-btn { background:#27ae60; color:#fff; }
+#vinted-btn { background:#27ae60; color:white; }
 
 .popup {
   position:fixed;
@@ -142,7 +138,7 @@ button:hover { opacity:0.9; transform:scale(1.03); }
   .card { flex-direction:column; height:auto; }
   .card img { width:100%; height:auto; }
   .card .info { width:100%; padding:12px; }
-  .btns { flex-direction:row; justify-content:center; }
+  .btns { flex-direction:row; justify-content:center; flex-wrap:nowrap; }
   #settings { width:90%; top:70px; right:5%; }
 }
 </style>
@@ -150,7 +146,7 @@ button:hover { opacity:0.9; transform:scale(1.03); }
 <body>
 
 <header>
-  <div id="settings-toggle">⚙️</div>
+  <div class="logo" id="discord-logo">🎯 Paramètres</div>
 </header>
 
 <div id="settings">
@@ -166,10 +162,26 @@ button:hover { opacity:0.9; transform:scale(1.03); }
     </label>
     <div id="fav-brands" style="display:none; margin-top:10px;">
       <h4>💖 Marques favorites</h4>
+      <!-- Plus de 20 marques -->
       <label><input type="checkbox" class="brand-check" value="Nike"> Nike 👟</label>
       <label><input type="checkbox" class="brand-check" value="Dior"> Dior ✨</label>
       <label><input type="checkbox" class="brand-check" value="Levi's"> Levi's 👖</label>
       <label><input type="checkbox" class="brand-check" value="Zara"> Zara 🧥</label>
+      <label><input type="checkbox" class="brand-check" value="Adidas"> Adidas ⚡</label>
+      <label><input type="checkbox" class="brand-check" value="Ralph Lauren"> Ralph Lauren 🐎</label>
+      <label><input type="checkbox" class="brand-check" value="Gucci"> Gucci 💎</label>
+      <label><input type="checkbox" class="brand-check" value="Puma"> Puma 🐾</label>
+      <label><input type="checkbox" class="brand-check" value="H&M"> H&M 👕</label>
+      <label><input type="checkbox" class="brand-check" value="Louis Vuitton"> Louis Vuitton 👜</label>
+      <label><input type="checkbox" class="brand-check" value="Chanel"> Chanel 🖤</label>
+      <label><input type="checkbox" class="brand-check" value="Fendi"> Fendi 🎀</label>
+      <label><input type="checkbox" class="brand-check" value="Balenciaga"> Balenciaga 👟</label>
+      <label><input type="checkbox" class="brand-check" value="Supreme"> Supreme 🔥</label>
+      <label><input type="checkbox" class="brand-check" value="Tommy Hilfiger"> Tommy Hilfiger 🏴</label>
+      <label><input type="checkbox" class="brand-check" value="New Balance"> New Balance 🏃‍♂️</label>
+      <label><input type="checkbox" class="brand-check" value="Vans"> Vans 👟</label>
+      <label><input type="checkbox" class="brand-check" value="Reebok"> Reebok ⚡</label>
+      <label><input type="checkbox" class="brand-check" value="Carhartt"> Carhartt 🛠</label>
     </div>
   </div>
 </div>
@@ -200,12 +212,19 @@ button:hover { opacity:0.9; transform:scale(1.03); }
 <div id="best-popup" class="popup"></div>
 
 <script>
+// === ARTICLES ===
 const items=[
 {title:"Sweat Nike Tech",brand:"Nike",size:"M",condition:"Très bon état",price:"45€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
 {title:"T-shirt Dior logo",brand:"Dior",size:"L",condition:"Neuf",price:"90€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
 {title:"Jean Levi's 501",brand:"Levi's",size:"42",condition:"Bon état",price:"55€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
 {title:"Veste Zara beige",brand:"Zara",size:"S",condition:"Très bon état",price:"35€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
-// Ajoute ici tes 20+ articles avec emojis
+{title:"T-shirt Adidas Originals",brand:"Adidas",size:"L",condition:"Neuf",price:"50€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+{title:"Polo Ralph Lauren",brand:"Ralph Lauren",size:"M",condition:"Bon état",price:"70€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+{title:"Sweat Gucci",brand:"Gucci",size:"L",condition:"Très bon état",price:"120€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+{title:"Chaussures Puma",brand:"Puma",size:"42",condition:"Neuf",price:"60€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+{title:"Chemise H&M",brand:"H&M",size:"M",condition:"Neuf",price:"25€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+{title:"Sac Louis Vuitton",brand:"Louis Vuitton",size:"Unique",condition:"Très bon état",price:"350€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+// ... ajoute encore 10-15 articles ici pour atteindre 20+
 ];
 
 let index=0, isVIP=false, history=[], favorites=[], notifBest=false, bestArticles=[], favBrands=[];
@@ -213,9 +232,7 @@ let index=0, isVIP=false, history=[], favorites=[], notifBest=false, bestArticle
 function showItem(){
   const item = items[index];
   if(isVIP && favBrands.length>0 && !favBrands.includes(item.brand)){
-    index=(index+1)%items.length;
-    showItem();
-    return;
+    index=(index+1)%items.length; showItem(); return;
   }
   document.getElementById("item-img").src=item.image;
   document.getElementById("item-title").textContent="🛒 "+item.title;
@@ -226,46 +243,35 @@ function showItem(){
   document.getElementById("vinted-btn").onclick=()=>window.open(item.link,"_blank");
   document.getElementById("favorite-btn").style.display=isVIP?"inline-block":"none";
 }
+showItem();
 
-function updateBestButton(){
-  const bestBtn = document.getElementById("best-btn");
-  bestBtn.style.display = isVIP ? "block" : "none";
-  bestBtn.textContent = bestArticles.length>0 ? "❗ Meilleurs articles" : "☹ Meilleurs articles";
-}
-
-function addBest(item){
-  bestArticles.push(item);
-  updateBestButton();
-}
-
+// === SKIP ===
 const card = document.getElementById("card");
-function skipItem(){
+document.getElementById("skip-btn").addEventListener("click",()=>{
   card.classList.add("slide-left");
   setTimeout(()=>{
     history.push(items[index]);
     index=(index+1)%items.length;
     showItem();
-    card.classList.remove("slide-left");
-    card.classList.add("zoom-in");
+    card.classList.remove("slide-left"); card.classList.add("zoom-in");
     setTimeout(()=>card.classList.remove("zoom-in"),500);
-    if(isVIP && notifBest && Math.random()<0.5)addBest(items[index]);
+    if(isVIP && notifBest && Math.random()<0.5) addBest(items[index]);
   },400);
-}
-
-document.getElementById("skip-btn").addEventListener("click",skipItem);
-document.getElementById("favorite-btn").addEventListener("click",()=>{
-  const item=items[index];
-  if(isVIP && !favorites.includes(item))favorites.push(item);
-  updateBestButton();
 });
 
-document.getElementById("settings-toggle").addEventListener("click",()=>{
+// === FAVORIS ===
+document.getElementById("favorite-btn").addEventListener("click",()=>{
+  const item=items[index]; if(!favorites.includes(item)) favorites.push(item);
+});
+
+// === PARAMETRES ===
+document.getElementById("discord-logo").addEventListener("click",()=>{
   const settings=document.getElementById("settings");
   settings.style.display=(settings.style.display==="block"?"none":"block");
 });
-
 document.getElementById("darkToggle").addEventListener("change",()=>{document.body.classList.toggle("dark-mode");});
 
+// === VIP ===
 const vipBtn=document.getElementById("vip-btn");
 const vipPopup=document.getElementById("vip-popup");
 const favoritesView=document.getElementById("favorites-view");
@@ -280,19 +286,14 @@ const bestBtn=document.getElementById("best-btn");
 const bestPopup=document.getElementById("best-popup");
 
 vipBtn.addEventListener("click",()=>{
-  vipPopup.innerHTML='<span class="popup-close">✖</span><h4>💎 Devenir VIP - 4,99€/mois</h4><ul><li>0 Delay ⚡</li><li>Notifications meilleurs articles 🔔</li><li>Historique complet 🕘</li><li>Favoris sur les articles ❤️</li><li>Marques préférées filtrables 💖</li></ul><button id="pay-vip">Payer VIP</button>';
+  vipPopup.innerHTML='✖<span class="popup-close">✖</span><h4>💎 Devenir VIP - 4,99€/mois</h4><ul><li>0 Delay ⚡</li><li>Notifications meilleurs articles 🔔</li><li>Historique complet 🕘</li><li>Favoris sur les articles ❤️</li><li>Marques préférées filtrables 💖</li></ul><button id="pay-vip">Payer VIP</button>';
   vipPopup.style.display="block";
   vipPopup.querySelector(".popup-close").onclick=()=>vipPopup.style.display="none";
   document.getElementById("pay-vip").onclick=()=>{
-    isVIP=true;
-    vipPopup.style.display="none";
-    vipBtn.textContent="⭐ VIP Actif";
+    isVIP=true; vipPopup.style.display="none"; vipBtn.textContent="⭐ VIP Actif";
     document.getElementById("favorite-btn").style.display="inline-block";
-    favoritesView.style.display="block";
-    historyView.style.display="block";
-    notifLabel.style.display="block";
-    favBrandsDiv.style.display="block";
-    updateBestButton();
+    favoritesView.style.display="block"; historyView.style.display="block";
+    notifLabel.style.display="block"; favBrandsDiv.style.display="block"; updateBestButton();
   }
 });
 
@@ -303,56 +304,17 @@ brandChecks.forEach(cb=>{
   });
 });
 
-favoritesView.addEventListener("click",()=>{
+// === POPUP HISTO/FAV ===
+function openPopup(popup, arr, title){
   if(!isVIP) return;
-  favoritesPopup.innerHTML='<span class="popup-close">✖</span><h4>❤️ Favoris</h4><div class="item-list"></div><button id="fav-clear">Tout supprimer</button>';
-  const list=favoritesPopup.querySelector(".item-list");
-  favorites.forEach((it,i)=>{
+  popup.innerHTML=`<span class="popup-close">✖</span><h4>${title}</h4><div class="item-list"></div><button id="clear-all">Tout supprimer</button>`;
+  const list = popup.querySelector(".item-list");
+  arr.forEach((it,i)=>{
     const div=document.createElement("div");
-    div.innerHTML=`<img src="${it.image}" /><div>${it.title}<br>${it.price}<br><button data-i="${i}" class="del-fav">Supprimer</button></div>`;
+    div.innerHTML=`<img src="${it.image}" /><div>${it.title}<br>${it.price}<br>
+    <button onclick="window.open('${it.link}','_blank')">🛍 Voir sur Vinted</button>
+    <button data-i="${i}" class="del-item">Supprimer</button></div>`;
     list.appendChild(div);
   });
-  favoritesPopup.style.display="block";
-  favoritesPopup.querySelector(".popup-close").onclick=()=>favoritesPopup.style.display="none";
-  favoritesPopup.querySelectorAll(".del-fav").forEach(btn=>{btn.onclick=()=>{favorites.splice(btn.dataset.i,1); favoritesView.click();}});
-  favoritesPopup.querySelector("#fav-clear").onclick=()=>{favorites=[];favoritesView.click();}
-});
-
-historyView.addEventListener("click",()=>{
-  if(!isVIP) return;
-  historyPopup.innerHTML='<span class="popup-close">✖</span><h4>🕘 Historique</h4><div class="item-list"></div><button id="hist-clear">Tout supprimer</button>';
-  const list=historyPopup.querySelector(".item-list");
-  history.forEach((it,i)=>{
-    const div=document.createElement("div");
-    div.innerHTML=`<img src="${it.image}" /><div>${it.title}<br>${it.price}<br><button data-i="${i}" class="del-hist">Supprimer</button></div>`;
-    list.appendChild(div);
-  });
-  historyPopup.style.display="block";
-  historyPopup.querySelector(".popup-close").onclick=()=>historyPopup.style.display="none";
-  historyPopup.querySelectorAll(".del-hist").forEach(btn=>{btn.onclick=()=>{history.splice(btn.dataset.i,1); historyView.click();}});
-  historyPopup.querySelector("#hist-clear").onclick=()=>{history=[];historyView.click();}
-});
-
-notifCheckbox.addEventListener("change",()=>{notifBest=notifCheckbox.checked;});
-
-bestBtn.addEventListener("click", ()=>{
-  if(!isVIP || bestArticles.length===0){
-    alert("😔 Pas de meilleurs articles rentables");
-    return;
-  }
-  bestPopup.innerHTML='<span class="popup-close">✖</span><h4>❗ Meilleurs articles VIP</h4><div class="item-list"></div>';
-  const list = bestPopup.querySelector(".item-list");
-  bestArticles.forEach(it=>{
-    const div=document.createElement("div");
-    div.innerHTML=`<img src="${it.image}" style="width:50px;height:50px;border-radius:6px;margin-right:6px;" /><div>${it.title}<br>${it.price}</div>`;
-    list.appendChild(div);
-  });
-  bestPopup.style.display="block";
-  bestPopup.querySelector(".popup-close").onclick = ()=>bestPopup.style.display="none";
-});
-
-showItem();
-updateBestButton();
-</script>
-</body>
-</html>
+  popup.style.display="block";
+  popup.querySelector(".popup-close
