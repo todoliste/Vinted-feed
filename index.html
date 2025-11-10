@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vinted Feed Demo (Simulation Discord)</title>
+<style>
+  :root{
+    --bg:#f0f2f5; --card:#ffffff; --text:#0f1720; --muted:#6b7280;
+  }
+  body.dark{ --bg:#0b1020; --card:#0f1720; --text:#e6eef8; --muted:#9aa6bf; }
+  body{ margin:0; font-family:Inter, system-ui, Arial; background:var(--bg); color:var(--text); }
+  header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:transparent}
+  .title{font-weight:700}
+  .controls{display:flex;gap:8px;align-items:center}
+  button{cursor:pointer;padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);background:var(--card)}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+  #app{display:flex;gap:20px;padding:18px;align-items:flex-start}
+  /* Left column: cards */
+  #cardArea{width:360px;min-height:480px;position:relative}
+  .card{width:340px;background:var(--card);border-radius:12px;padding:12px;box-shadow:0 8px 20px rgba(2,6,23,0.12);position:absolute;left:10px;top:10px;transition:transform .35s ease,opacity .2s;display:flex;flex-direction:column;gap:10px}
+  .card img{width:100%;height:220px;object-fit:cover;border-radius:8px}
+  .card h3{margin:0;font-size:18px}
+  .meta{font-size:14px;color:var(--muted)}
+  /* Buttons under card */
+  .cardBtns{display:flex;justify-content:space-between;margin-top:8px}
+  .action{width:48%;padding:10px;border-radius:10px;font-weight:700}
+  .skip{background:#ffecec;color:#b02a2a}
+  .like{background:#e6ffef;color:#047857}
+  /* Right column: settings */
+  #side{flex:1;max-width:520px}
+  .panel{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(2,6,23,0.06);margin-bottom:12px}
+  label{display:block;font-size:13px;margin-bottom:6px}
+  .brands{display:flex;flex-wrap:wrap;gap:8px}
+  .brand-btn{padding:6px 8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);cursor:pointer;background:transparent}
+  .brand-btn.active{background:#2227ff10;border-color:#2227ff50}
+  input[type="number"]{padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);width:120px}
+  /* login overlay (simulation) */
+  #overlay{position:fixed;inset:0;background:rgba(2,6,23,0.55);display:flex;align-items:center;justify-content:center;z-index:999}
+  .loginCard{width:420px;background:var(--card);padding:18px;border-radius:12px;box-shadow:0 12px 40px rgba(2,6,23,0.5)}
+  .loginHeader{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .discordLogo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#5865f2,#3ba55d);display:flex;align-items:center;justify-content:center;color:white;font-weight:800}
+  .field{margin-bottom:8px}
+  .fakeInput{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:var(--bg);color:var(--text)}
+  .small{font-size:13px;color:var(--muted)}
+  .inviteLink{display:inline-block;margin-top:8px;text-decoration:none;padding:8px;border-radius:8px;background:#5865f2;color:white}
+  /* responsive */
+  @media(max-width:900px){#app{flex-direction:column;align-items:center}#side{width:100%}#cardArea{width:92%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="title">Vinted Feed — Demo</div>
+  <div class="controls">
+    <a id="inviteBot" class="inviteLink" href="https://discord.com/oauth2/authorize?client_id=1436886198173044796&response_type=code&redirect_uri=https%3A%2F%2Ftodoliste.github.io%2FVinted-feed%2F&scope=identify" target="_blank" rel="noreferrer noopener">Inviter le bot</a>
+    <button id="toggleTheme">Mode Sombre</button>
+  </div>
+</header>
+
+<!-- App -->
+<div id="app">
+  <div id="cardArea" aria-live="polite">
+    <!-- cartes empilées ici -->
+    <div style="font-size:13px;color:var(--muted);padding:12px">Chargement des cartes...</div>
+  </div>
+
+  <div id="side">
+    <div class="panel">
+      <strong>Statut :</strong>
+      <div id="userStatus" class="small" style="margin-top:8px">Vous devez vous connecter via Discord pour utiliser l'app.</div>
+      <div style="margin-top:10px">
+        <button id="openLogin">Se connecter (Simulé)</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <strong>Paramètres</strong>
+      <div style="margin-top:8px">
+        <label>Seuil minimum de gain (€)</label>
+        <input id="minGain" type="number" value="20" min="0" />
+      </div>
+      <div style="margin-top:12px">
+        <label>Marques préférées (clique pour activer/désactiver)</label>
+        <div class="brands" id="brandsList"></div>
+      </div>
+      <div style="margin-top:12px">
+        <label>Contrôles</label>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="btnSkip" class="action skip">Passer (←)</button>
+          <button id="btnLike" class="action like">Garder (→)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel small">
+      <strong>Notes :</strong>
+      <ul>
+        <li>Login Discord est <em>simulé</em> pour la démo.</li>
+        <li>Toutes les données ici sont générées aléatoirement (demo).</li>
+        <li>Pour une version réelle il faudrait un backend OAuth + scraping.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay login (simulé) -->
+<div id="overlay">
+  <div class="loginCard" role="dialog" aria-modal="true">
+    <div class="loginHeader">
+      <div class="discordLogo">DC</div>
+      <div>
+        <div style="font-weight:700">Connexion Discord (Simulation)</div>
+        <div class="small">Entrez des valeurs d'exemple pour simuler une session</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="small">Email ou nom d'utilisateur</label>
+      <input id="fakeUser" class="fakeInput" value="exemple#1234" />
+    </div>
+    <div class="field">
+      <label class="small">Mot de passe</label>
+      <input id="fakePass" type="password" class="fakeInput" value="exemple" />
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+      <button id="doLogin">Se connecter (Simuler)</button>
+      <button id="doCancel" class="ghost">Annuler</button>
+      <a id="inviteInline" class="inviteLink" href="https://discord.com/oauth2/authorize?client_id=1436886198173044796&response_type=code&redirect_uri=https%3A%2F%2Ftodoliste.github.io%2FVinted-feed%2F&scope=identify" target="_blank" rel="noreferrer noopener" style="margin-left:auto">Inviter le bot</a>
+    </div>
+
+    <div style="margin-top:10px" class="small">Exemple : utilisateur = <code>exemple#1234</code> / mot de passe = <code>exemple</code></div>
+  </div>
+</div>
+
+<script>
+/* ========== App logic ========== */
+const brands = [
+  "Nike","Adidas","Ralph Lauren","CP Company","Puma","Reebok",
+  "Under Armour","New Balance","Converse","Vans",
+  "The North Face","Columbia","Patagonia","Fila","Champion",
+  "Tommy Hilfiger","Lacoste","Jordan","Asics","Carhartt"
+];
+
+const brandsListEl = document.getElementById('brandsList');
+const selectedBrands = new Set(brands.slice(0, 20)); // toutes activées par défaut
+const minGainInput = document.getElementById('minGain');
+let cardStack = []; // tableau d'articles affichés
+const MAX_CARDS = 30;
+let currentUser = null; // sera défini après "login" simulé
+const overlay = document.getElementById('overlay');
+const userStatus = document.getElementById('userStatus');
+const cardArea = document.getElementById('cardArea');
+
+/* créer boutons marques */
+brands.forEach(b=>{
+  const btn = document.createElement('button');
+  btn.className = 'brand-btn active';
+  btn.textContent = b;
+  btn.onclick = ()=> {
+    if(btn.classList.contains('active')){
+      btn.classList.remove('active');
+      selectedBrands.delete(b);
+    } else {
+      btn.classList.add('active');
+      selectedBrands.add(b);
+    }
+    refreshCardsDisplay();
+  };
+  brandsListEl.appendChild(btn);
+});
+
+/* Theme toggle */
+document.getElementById('toggleTheme').onclick = ()=>{
+  document.body.classList.toggle('dark');
+  document.getElementById('toggleTheme').textContent = document.body.classList.contains('dark') ? 'Mode Clair' : 'Mode Sombre';
+};
+
+/* Login simulation */
+document.getElementById('openLogin').onclick = ()=> overlay.style.display = 'flex';
+document.getElementById('doCancel').onclick = ()=> overlay.style.display = 'none';
+document.getElementById('doLogin').onclick = ()=>{
+  const user = document.getElementById('fakeUser').value || 'exemple#1234';
+  currentUser = {name:user, id: 'demo-'+Math.floor(Math.random()*999999)};
+  overlay.style.display = 'none';
+  userStatus.innerHTML = `<strong>Connecté :</strong> ${currentUser.name} (session simulée)`;
+  // show cards if not present
+  if(cardStack.length === 0) refillCards();
+};
+
+/* Invite link (already in DOM) */
+
+/* Generer articles aleatoires */
+function generateArticle(i){
+  const brand = brands[Math.floor(Math.random()*brands.length)];
+  const price_vinted = Math.floor(Math.random()*90)+10; // 10..99
+  const price_ebay = price_vinted + Math.floor(Math.random()*200)+10; // +10..209
+  const gain = price_ebay - price_vinted;
+  return {
+    id: 'a-'+Date.now()+ '-' + i,
+    name: `${brand} Article ${Math.floor(Math.random()*9999)}`,
+    brand, price_vinted, price_ebay, gain,
+    image: `https://via.placeholder.com/640x420?text=${encodeURIComponent(brand)}`
+  };
+}
+
+/* Remplir la pile initiale selon filtres */
+function refillCards(){
+  cardStack = [];
+  const mg = parseInt(minGainInput.value)||20;
+  let tries = 0;
+  while(cardStack.length < MAX_CARDS && tries < MAX_CARDS*6){
+    const a = generateArticle(tries);
+    if(selectedBrands.has(a.brand) && a.gain >= mg) cardStack.push(a);
+    tries++;
+  }
+  renderStack();
+}
+
+/* actualise l'affichage (apres modifications de filtres) */
+function refreshCardsDisplay(){
+  // conserve position: on remplace la pile par nouvelles selon filtres
+  refillCards();
+}
+
+/* render cards: empile du dernier au premier */
+function renderStack(){
+  cardArea.innerHTML = '';
+  if(!currentUser){
+    // si pas connecté, affiche message et bloquer
+    const info = document.createElement('div');
+    info.style.padding = '14px';
+    info.style.color = 'var(--muted)';
+    info.textContent = 'Veuillez vous connecter (simulé) pour voir les articles.';
+    cardArea.appendChild(info);
+    return;
+  }
+  if(cardStack.length === 0){
+    const info = document.createElement('div');
+    info.style.padding = '14px';
+    info.style.color = 'var(--muted)';
+    info.textContent = 'Aucun article trouvé (changez les filtres).';
+    cardArea.appendChild(info);
+    return;
+  }
+  // render from last to first so first is on top
+  for(let i = cardStack.length -1; i>=0; i--){
+    const art = cardStack[i];
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.dataset.id = art.id;
+    el.style.zIndex = 100 + i;
+    el.style.transform = `scale(${1 - (cardStack.length -1 - i) * 0.02}) translateY(${(cardStack.length -1 - i)*6}px)`;
+    el.innerHTML = `
+      <img src="${art.image}" alt="${art.name}" />
+      <h3>${art.name}</h3>
+      <div class="meta">${art.brand} · Prix Vinted: €${art.price_vinted}</div>
+      <div class="meta">Estimation revente: €${art.price_ebay} · Gain: €${art.gain}</div>
+      <div class="cardBtns">
+        <button class="action skip">Passer</button>
+        <button class="action like">Garder</button>
+      </div>
+    `;
+    // attach button handlers
+    el.querySelector('.skip').onclick = ()=> swipeLeft(art.id);
+    el.querySelector('.like').onclick = ()=> swipeRight(art.id);
+    // allow keyboard left/right
+    cardArea.appendChild(el);
+  }
+}
+
+/* swipe logic: remove card by id */
+function swipeLeft(id){
+  animateSwipe(id, -1);
+}
+function swipeRight(id){
+  animateSwipe(id, 1);
+}
+function animateSwipe(id, dir){
+  const el = cardArea.querySelector(`.card[data-id="${id}"]`);
+  if(!el) return;
+  el.style.transition = 'transform .45s ease, opacity .3s';
+  el.style.transform = `translateX(${dir*800}px) rotate(${dir*10}deg)`;
+  el.style.opacity = '0';
+  // after animation remove from stack
+  setTimeout(()=>{
+    cardStack = cardStack.filter(c=> c.id !== id);
+    // keep stack length: add new if not reach MAX
+    addNewArticles(1);
+    renderStack();
+  },450);
+}
+
+/* add n new articles that match filters */
+function addNewArticles(n){
+  const mg = parseInt(minGainInput.value)||20;
+  let tries=0;
+  while(n>0 && tries < 200){
+    const a = generateArticle(tries);
+    if(selectedBrands.has(a.brand) && a.gain >= mg){
+      cardStack.unshift(a); // add to start so it appears near top
+      n--;
+    }
+    tries++;
+  }
+  // cap to MAX_CARDS
+  if(cardStack.length > MAX_CARDS) cardStack = cardStack.slice(0,MAX_CARDS);
+}
+
+/* periodic update: toutes les 30s ajouter X nouvelles cartes */
+setInterval(()=>{
+  if(!currentUser) return; // only while "logged"
+  addNewArticles(4); // ajoute 4 nouvelles toutes les 30s
+  renderStack();
+},30000);
+
+/* buttons under settings */
+document.getElementById('btnSkip').onclick = ()=> {
+  // swipe top card left
+  if(cardStack.length) swipeLeft(cardStack[0].id);
+};
+document.getElementById('btnLike').onclick = ()=> {
+  if(cardStack.length) swipeRight(cardStack[0].id);
+};
+
+/* keyboard support */
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowLeft') {
+    if(cardStack.length) swipeLeft(cardStack[0].id);
+  } else if(e.key === 'ArrowRight') {
+    if(cardStack.length) swipeRight(cardStack[0].id);
+  }
+});
+
+/* when changing minGain, refresh */
+minGainInput.addEventListener('change', ()=> refreshCardsDisplay());
+
+/* initial render: show overlay login by default (user must simulate login) */
+overlay.style.display = 'flex';
+renderStack();
+</script>
+</body>
+</html>
