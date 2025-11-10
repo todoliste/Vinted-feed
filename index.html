@@ -10,12 +10,12 @@ body {
   font-family: "Poppins", sans-serif;
   background: #f5f5f5;
   color: #333;
-  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
 }
 .dark-mode { background: #121212; color: #f1f1f1; }
 
@@ -63,7 +63,7 @@ header {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   padding: 12px;
-  width: 220px;
+  width: 240px;
   display: none;
   z-index: 99;
 }
@@ -106,6 +106,82 @@ header {
   padding: 4px;
   border: 1px solid #ccc;
 }
+
+main {
+  margin-top: 70px;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: transform 0.3s, background 0.3s;
+  margin-bottom: 80px;
+}
+.dark-mode .card { background: #1f1f1f; }
+
+.card img {
+  width: 50%;
+  object-fit: contain;
+  background: #f9f9f9;
+}
+.card .info {
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.info h2 { font-size: 1.1rem; margin: 4px 0; }
+.info p { font-size: 0.9rem; margin: 2px 0; }
+.price { color: #2f80ed; font-weight: 600; font-size: 1rem; margin-top: 6px; }
+
+.btns {
+  position: fixed;
+  bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+button {
+  background: #2f80ed;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+button:hover { opacity: 0.9; transform: scale(1.03); }
+#skip-btn { background: #666; }
+
+#history-popup {
+  position: fixed;
+  top:50%; left:50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  width: 80%;
+  max-width: 400px;
+  display: none;
+  max-height: 70%;
+  overflow-y: auto;
+  z-index: 200;
+}
+.dark-mode #history-popup { background: #1f1f1f; color: #fff; }
+.history-item { display:flex; gap:10px; margin-bottom:8px; }
+.history-item img { width:50px; height:50px; object-fit:cover; border-radius:6px; }
 </style>
 </head>
 <body>
@@ -176,6 +252,8 @@ header {
   </div>
 </main>
 
+<div id="history-popup"></div>
+
 <script>
 const items = [
   {title:"Sweat Nike Tech", brand:"Nike", size:"M", condition:"Très bon état", price:"45€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
@@ -186,6 +264,7 @@ const items = [
 
 let index = 0;
 let isVIP = false;
+let history = [];
 
 function showItem() {
   const item = items[index];
@@ -200,6 +279,7 @@ function showItem() {
 showItem();
 
 document.getElementById("skip-btn").addEventListener("click", ()=>{
+  history.push(items[index]); // Ajoute à l'historique
   index = (index + 1) % items.length;
   showItem();
 });
@@ -217,6 +297,8 @@ document.getElementById("darkToggle").addEventListener("change", ()=>{
 const vipBtn = document.getElementById("vip-btn");
 const vipOptions = document.getElementById("vip-options");
 const discordLogo = document.getElementById("discord-logo");
+const historyToggle = document.getElementById("historyToggle");
+const historyPopup = document.getElementById("history-popup");
 
 vipBtn.addEventListener("click", ()=>{
   if (!isVIP) {
@@ -226,11 +308,31 @@ vipBtn.addEventListener("click", ()=>{
       vipOptions.style.display = "block";
       vipBtn.textContent = "⭐ VIP Actif";
       discordLogo.classList.add("vip-aura");
-      alert("✅ VIP activé avec succès !");
+      alert("✅ VIP activé !");
     }
   } else {
     alert("Tu es déjà VIP !");
   }
+});
+
+historyToggle.addEventListener("click", ()=>{
+  if (!isVIP) return;
+  if (history.length === 0) {
+    alert("Aucun article dans l'historique.");
+    return;
+  }
+  historyPopup.innerHTML = "<h4>Historique</h4>";
+  history.forEach(it => {
+    const div = document.createElement("div");
+    div.className = "history-item";
+    div.innerHTML = `<img src="${it.image}" /><div>${it.title}<br>${it.price}<br><a href="${it.link}" target="_blank">Voir</a></div>`;
+    historyPopup.appendChild(div);
+  });
+  historyPopup.style.display = "block";
+});
+
+historyPopup.addEventListener("click", ()=>{
+  historyPopup.style.display = "none";
 });
 </script>
 
