@@ -34,7 +34,10 @@ header {
 }
 .dark-mode header { background: rgba(25,25,25,0.9); }
 
-#settings-toggle { cursor:pointer; font-size:1.5rem; }
+#settings-toggle {
+  cursor:pointer;
+  font-size: 1.5rem;
+}
 
 #settings {
   position: fixed;
@@ -218,10 +221,10 @@ const items=[
 {title:"T-shirt Dior logo",brand:"Dior",size:"L",condition:"Neuf",price:"90€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
 {title:"Jean Levi's 501",brand:"Levi's",size:"42",condition:"Bon état",price:"55€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
 {title:"Veste Zara beige",brand:"Zara",size:"S",condition:"Très bon état",price:"35€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
-// Ajoute ici tes 20+ articles avec emojis et liens Vinted
+// Tu peux ajouter plus de 20 articles ici
 ];
 
-let index=0, isVIP=false, history=[], favorites=[], notifBest=false, bestArticles=[], favBrands=[], seenBest=[];
+let index=0, isVIP=false, history=[], favorites=[], notifBest=false, bestArticles=[], favBrands=[];
 
 function showItem(){
   const item = items[index];
@@ -240,6 +243,17 @@ function showItem(){
   document.getElementById("favorite-btn").style.display=isVIP?"inline-block":"none";
 }
 
+function updateBestButton(){
+  const bestBtn = document.getElementById("best-btn");
+  bestBtn.style.display = isVIP ? "block" : "none";
+  bestBtn.textContent = bestArticles.length>0 ? "❗ Meilleurs articles" : "☹ Meilleurs articles";
+}
+
+function addBest(item){
+  bestArticles.push(item);
+  updateBestButton();
+}
+
 const card = document.getElementById("card");
 function skipItem(){
   card.classList.add("slide-left");
@@ -250,23 +264,14 @@ function skipItem(){
     card.classList.remove("slide-left");
     card.classList.add("zoom-in");
     setTimeout(()=>card.classList.remove("zoom-in"),500);
-    if(isVIP && notifBest && !seenBest.includes(items[index])){
-      bestArticles.push(items[index]);
-      seenBest.push(items[index]);
-    }
-    updateBestButton();
+    if(isVIP && notifBest && Math.random()<0.5)addBest(items[index]);
   },400);
-}
-
-function updateBestButton(){
-  const bestBtn = document.getElementById("best-btn");
-  bestBtn.style.display = isVIP ? "block" : "none";
-  bestBtn.textContent = bestArticles.length>0 ? "❗ Meilleurs articles" : "☹ Meilleurs articles";
 }
 
 document.getElementById("skip-btn").addEventListener("click",skipItem);
 document.getElementById("favorite-btn").addEventListener("click",()=>{
-  if(isVIP && !favorites.includes(items[index])) favorites.push(items[index]);
+  const item=items[index];
+  if(isVIP && !favorites.includes(item))favorites.push(item);
   updateBestButton();
 });
 
@@ -274,6 +279,7 @@ document.getElementById("settings-toggle").addEventListener("click",()=>{
   const settings=document.getElementById("settings");
   settings.style.display=(settings.style.display==="block"?"none":"block");
 });
+
 document.getElementById("darkToggle").addEventListener("change",()=>{document.body.classList.toggle("dark-mode");});
 
 const vipBtn=document.getElementById("vip-btn");
@@ -319,7 +325,7 @@ favoritesView.addEventListener("click",()=>{
   const list=favoritesPopup.querySelector(".item-list");
   favorites.forEach((it,i)=>{
     const div=document.createElement("div");
-    div.innerHTML=`<img src="${it.image}" /><div>${it.title}<br>${it.price}<br><button data-i="${i}" class="del-fav">Supprimer</button><br><button onclick="window.open('${it.link}','_blank')">🛍 Voir sur Vinted</button></div>`;
+    div.innerHTML=`<img src="${it.image}" /><div>${it.title}<br>${it.price}<br><button data-i="${i}" class="del-fav">Supprimer</button> <button onclick="window.open('${it.link}','_blank')">🛍 Voir sur Vinted</button></div>`;
     list.appendChild(div);
   });
   favoritesPopup.style.display="block";
@@ -334,6 +340,13 @@ historyView.addEventListener("click",()=>{
   const list=historyPopup.querySelector(".item-list");
   history.forEach((it,i)=>{
     const div=document.createElement("div");
-    div.innerHTML=`<img src="${it.image}" /><div>${it.title}<br>${it.price}<br><button data-i="${i}" class="del-hist">Supprimer</button><br><button onclick="window.open('${it.link}','_blank')">🛍 Voir sur Vinted</button></div>`;
+    div.innerHTML=`<img src="${it.image}" /><div>${it.title}<br>${it.price}<br><button data-i="${i}" class="del-hist">Supprimer</button> <button onclick="window.open('${it.link}','_blank')">🛍 Voir sur Vinted</button></div>`;
     list.appendChild(div);
   });
+  historyPopup.style.display="block";
+  historyPopup.querySelector(".popup-close").onclick=()=>historyPopup.style.display="none";
+  historyPopup.querySelectorAll(".del-hist").forEach(btn=>{btn.onclick=()=>{history.splice(btn.dataset.i,1); historyView.click();}});
+  historyPopup.querySelector("#hist-clear").onclick=()=>{history=[];historyView.click();}
+});
+
+notifCheckbox.addEventListener
