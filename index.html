@@ -16,10 +16,7 @@ body {
   transition: background 0.3s, color 0.3s;
   min-height: 100vh;
 }
-.dark-mode {
-  background: #121212;
-  color: #f1f1f1;
-}
+.dark-mode { background: #121212; color: #f1f1f1; }
 
 header {
   position: fixed;
@@ -37,14 +34,7 @@ header {
 }
 .dark-mode header { background: rgba(25,25,25,0.8); }
 
-.logo {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  font-size: 1rem;
-  gap: 8px;
-}
-.logo img { width: 24px; height: 24px; cursor:pointer; }
+.logo { display: flex; align-items: center; font-weight: 600; font-size: 1rem; gap: 8px; cursor:pointer; }
 
 #settings {
   position: fixed;
@@ -84,8 +74,8 @@ main {
   border-radius:16px;
   box-shadow:0 6px 18px rgba(0,0,0,0.08);
   overflow:hidden;
-  transition: transform 0.5s ease;
   position:relative;
+  transition: transform 0.5s ease, opacity 0.4s ease;
 }
 .dark-mode .card { background:#1f1f1f; }
 .card img { width:100%; object-fit:contain; background:#f9f9f9; }
@@ -99,6 +89,7 @@ main {
   justify-content:center;
   gap:10px;
   margin-top:12px;
+  flex-wrap: wrap;
 }
 button { cursor:pointer; padding:10px 20px; border:none; border-radius:10px; font-weight:600; transition:0.2s; }
 button:hover { opacity:0.9; transform:scale(1.03); }
@@ -123,15 +114,6 @@ button:hover { opacity:0.9; transform:scale(1.03); }
 .item-list div { display:flex; gap:10px; margin-bottom:8px; align-items:center; }
 .item-list img { width:50px; height:50px; object-fit:cover; border-radius:6px; }
 
-@media(min-width:700px){
-  .card { flex-direction:row; height:400px; }
-  .card img { width:60%; height:100%; }
-  .card .info { width:40%; justify-content:center; padding:16px; }
-  .info h2 { font-size:1.4rem; }
-  .info p { font-size:1rem; }
-}
-
-/* Bouton Meilleurs articles VIP */
 #best-btn{
   position: fixed;
   top: 10px;
@@ -146,30 +128,48 @@ button:hover { opacity:0.9; transform:scale(1.03); }
   color:white;
 }
 #best-btn:hover { opacity: 0.9; transform: scale(1.05); }
+
+.card.slide-left { transform: translateX(-120%) rotate(-10deg) scale(0.9); opacity:0; }
+.card.zoom-in { transform: scale(1.05); opacity:1; transition: transform 0.5s ease, opacity 0.4s ease; }
+
+@media(max-width:700px){
+  main { width:95%; }
+  .card { flex-direction:column; height:auto; }
+  .card img { width:100%; height:auto; }
+  .card .info { width:100%; padding:12px; }
+  .btns { flex-direction:column; }
+  #settings { width:90%; top:70px; right:5%; }
+}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo" id="discord-logo">
-    <img src="https://cdn-icons-png.flaticon.com/512/925/925123.png" alt="Logo">Vinted Feed
-  </div>
+  <div class="logo" id="discord-logo">🎯 Vinted Feed</div>
 </header>
 
 <div id="settings">
   <h4>⚙️ Paramètres</h4>
-  <label><input type="checkbox" id="darkToggle"> Mode sombre</label>
+  <label><input type="checkbox" id="darkToggle"> 🌙 Mode sombre</label>
   <div class="vip-section">
     <h4>⭐ VIP</h4>
-    <button id="vip-btn">Devenir VIP</button>
-    <button id="favorites-view">Voir mes favoris</button>
-    <button id="history-view">Voir historique</button>
-    <label><input type="checkbox" id="notif-best"> Notifications meilleurs articles</label>
+    <button id="vip-btn">💎 Devenir VIP</button>
+    <button id="favorites-view">❤️ Voir mes favoris</button>
+    <button id="history-view">🕘 Voir historique</button>
+    <label id="notif-label" style="display:none;">
+      🔔 <input type="checkbox" id="notif-best"> Notifications meilleurs articles
+    </label>
+    <div id="fav-brands" style="display:none; margin-top:10px;">
+      <h4>💖 Marques favorites</h4>
+      <label><input type="checkbox" class="brand-check" value="Nike"> Nike 👟</label>
+      <label><input type="checkbox" class="brand-check" value="Dior"> Dior ✨</label>
+      <label><input type="checkbox" class="brand-check" value="Levi's"> Levi's 👖</label>
+      <label><input type="checkbox" class="brand-check" value="Zara"> Zara 🧥</label>
+    </div>
   </div>
 </div>
 
-<!-- Bouton Meilleurs articles VIP -->
-<button id="best-btn">☹</button>
+<button id="best-btn">☹ Meilleurs articles</button>
 
 <main>
   <div class="card" id="card">
@@ -183,7 +183,7 @@ button:hover { opacity:0.9; transform:scale(1.03); }
     </div>
   </div>
   <div class="btns">
-    <button id="skip-btn">⏭ Skip</button>
+    <button id="skip-btn">⏭ Passer</button>
     <button id="favorite-btn">❤️ Favoris</button>
     <button id="vinted-btn">🛍 Voir sur Vinted</button>
   </div>
@@ -202,35 +202,31 @@ const items=[
 {title:"Veste Zara beige",brand:"Zara",size:"S",condition:"Très bon état",price:"35€",link:"#",image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
 ];
 
-let index=0, isVIP=false, history=[], favorites=[], notifBest=false, bestArticles=[];
+let index=0, isVIP=false, history=[], favorites=[], notifBest=false, bestArticles=[], favBrands=[];
 
 function showItem(){
   const item = items[index];
+  // Filtre marques favorites VIP
+  if(isVIP && favBrands.length>0 && !favBrands.includes(item.brand)){
+    index=(index+1)%items.length;
+    showItem();
+    return;
+  }
   document.getElementById("item-img").src=item.image;
-  document.getElementById("item-title").textContent=item.title;
-  document.getElementById("item-brand").textContent="Marque : "+item.brand;
-  document.getElementById("item-size").textContent="Taille : "+item.size;
-  document.getElementById("item-condition").textContent="État : "+item.condition;
-  document.getElementById("item-price").textContent=item.price;
+  document.getElementById("item-title").textContent="🛒 "+item.title;
+  document.getElementById("item-brand").textContent="🏷 Marque : "+item.brand;
+  document.getElementById("item-size").textContent="📏 Taille : "+item.size;
+  document.getElementById("item-condition").textContent="🔹 État : "+item.condition;
+  document.getElementById("item-price").textContent="💰 "+item.price;
   document.getElementById("vinted-btn").onclick=()=>window.open(item.link,"_blank");
   document.getElementById("favorite-btn").style.display=isVIP?"inline-block":"none";
 }
-showItem();
 
-function skipItem(){
-  document.getElementById("card").style.transform="translateX(-100%)";
-  setTimeout(()=>{
-    history.push(items[index]);
-    index=(index+1)%items.length;
-    document.getElementById("card").style.transform="translateX(0)";
-    showItem();
-    if(isVIP && notifBest && Math.random()<0.5)addBest(items[index]);
-  },300);
-}
+showItem();
 
 function updateBestButton(){
   const bestBtn = document.getElementById("best-btn");
-  bestBtn.textContent = bestArticles.length>0 ? "❗" : "☹";
+  bestBtn.textContent = bestArticles.length>0 ? "❗ Meilleurs articles" : "☹ Meilleurs articles";
 }
 
 function addBest(item){
@@ -238,7 +234,23 @@ function addBest(item){
   updateBestButton();
 }
 
+const card = document.getElementById("card");
+
+function skipItem(){
+  card.classList.add("slide-left");
+  setTimeout(()=>{
+    history.push(items[index]);
+    index=(index+1)%items.length;
+    showItem();
+    card.classList.remove("slide-left");
+    card.classList.add("zoom-in");
+    setTimeout(()=>card.classList.remove("zoom-in"),500);
+    if(isVIP && notifBest && Math.random()<0.5)addBest(items[index]);
+  },400);
+}
+
 document.getElementById("skip-btn").addEventListener("click",skipItem);
+
 document.getElementById("favorite-btn").addEventListener("click",()=>{
   const item=items[index];
   if(!favorites.includes(item))favorites.push(item);
@@ -258,11 +270,14 @@ const historyView=document.getElementById("history-view");
 const historyPopup=document.getElementById("history-popup");
 const favoritesPopup=document.getElementById("favorites-popup");
 const notifCheckbox=document.getElementById("notif-best");
+const notifLabel=document.getElementById("notif-label");
+const favBrandsDiv=document.getElementById("fav-brands");
+const brandChecks=document.querySelectorAll(".brand-check");
 const bestBtn=document.getElementById("best-btn");
 const bestPopup=document.getElementById("best-popup");
 
 vipBtn.addEventListener("click",()=>{
-  vipPopup.innerHTML='<span class="popup-close">✖</span><h4>Devenir VIP - 4,99€/mois</h4><ul><li>0 Delay</li><li>Notifications meilleurs articles</li><li>Historique complet</li><li>Favoris sur les articles</li><li>Marques préférées filtrables</li></ul><button id="pay-vip">Payer VIP</button>';
+  vipPopup.innerHTML='✖<span class="popup-close">✖</span><h4>💎 Devenir VIP - 4,99€/mois</h4><ul><li>0 Delay ⚡</li><li>Notifications meilleurs articles 🔔</li><li>Historique complet 🕘</li><li>Favoris sur les articles ❤️</li><li>Marques préférées filtrables 💖</li></ul><button id="pay-vip">Payer VIP</button>';
   vipPopup.style.display="block";
   vipPopup.querySelector(".popup-close").onclick=()=>vipPopup.style.display="none";
   document.getElementById("pay-vip").onclick=()=>{
@@ -272,11 +287,20 @@ vipBtn.addEventListener("click",()=>{
     document.getElementById("favorite-btn").style.display="inline-block";
     favoritesView.style.display="block";
     historyView.style.display="block";
+    notifLabel.style.display="block"; 
+    favBrandsDiv.style.display="block"; 
   }
 });
 
+brandChecks.forEach(cb=>{
+  cb.addEventListener("change", ()=>{
+    favBrands = Array.from(brandChecks).filter(b=>b.checked).map(b=>b.value);
+    showItem();
+  });
+});
+
 favoritesView.addEventListener("click",()=>{
-  favoritesPopup.innerHTML='<span class="popup-close">✖</span><h4>Favoris</h4><div class="item-list"></div><button id="fav-clear">Tout supprimer</button>';
+  favoritesPopup.innerHTML='<span class="popup-close">✖</span><h4>❤️ Favoris</h4><div class="item-list"></div><button id="fav-clear">Tout supprimer</button>';
   const list=favoritesPopup.querySelector(".item-list");
   favorites.forEach((it,i)=>{
     const div=document.createElement("div");
@@ -290,7 +314,7 @@ favoritesView.addEventListener("click",()=>{
 });
 
 historyView.addEventListener("click",()=>{
-  historyPopup.innerHTML='<span class="popup-close">✖</span><h4>Historique</h4><div class="item-list"></div><button id="hist-clear">Tout supprimer</button>';
+  historyPopup.innerHTML='<span class="popup-close">✖</span><h4>🕘 Historique</h4><div class="item-list"></div><button id="hist-clear">Tout supprimer</button>';
   const list=historyPopup.querySelector(".item-list");
   history.forEach((it,i)=>{
     const div=document.createElement("div");
@@ -307,10 +331,10 @@ notifCheckbox.addEventListener("change",()=>{notifBest=notifCheckbox.checked;});
 
 bestBtn.addEventListener("click", ()=>{
   if(bestArticles.length===0){
-    alert("Pas de meilleurs articles rentables 😔");
+    alert("😔 Pas de meilleurs articles rentables");
     return;
   }
-  bestPopup.innerHTML='<span class="popup-close">✖</span><h4>Meilleurs articles VIP</h4><div class="item-list"></div>';
+  bestPopup.innerHTML='<span class="popup-close">✖</span><h4>❗ Meilleurs articles VIP</h4><div class="item-list"></div>';
   const list = bestPopup.querySelector(".item-list");
   bestArticles.forEach(it=>{
     const div=document.createElement("div");
@@ -321,7 +345,6 @@ bestBtn.addEventListener("click", ()=>{
   bestPopup.querySelector(".popup-close").onclick = ()=>bestPopup.style.display="none";
 });
 
-// Initialisation du bouton
 updateBestButton();
 </script>
 
