@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vinted VIP Minimal</title>
+<title>Vinted VIP</title>
 <style>
-body{margin:0;font-family:sans-serif;background:#f5f5f5;color:#333;display:flex;flex-direction:column;align-items:center;min-height:100vh;}
-.dark-mode{background:#121212;color:#fff;}
-header{position:fixed;top:0;width:100%;height:50px;display:flex;justify-content:flex-end;align-items:center;padding:0 10px;background:rgba(255,255,255,0.9);z-index:100;}
-.dark-mode header{background:rgba(25,25,25,0.9);}
+body{margin:0;font-family:sans-serif;background:#f5f5f5;color:#333;display:flex;flex-direction:column;align-items:center;min-height:100vh;transition:0.3s;}
+body.dark{background:#121212;color:#fff;}
+header{position:fixed;top:0;width:100%;height:50px;display:flex;justify-content:flex-end;align-items:center;padding:0 10px;background:rgba(255,255,255,0.9);z-index:100;transition:0.3s;}
+body.dark header{background:rgba(25,25,25,0.9);}
 #settings-toggle{cursor:pointer;font-size:1.4rem;}
-#settings{position:fixed;top:55px;right:5px;background:#fff;border-radius:10px;padding:6px;width:220px;display:none;z-index:99;font-size:0.85rem;}
-.dark-mode #settings{background:#1f1f1f;color:#fff;}
+#settings{position:fixed;top:55px;right:5px;background:#fff;border-radius:10px;padding:8px;width:230px;display:none;z-index:99;font-size:0.85rem;transition:0.3s;}
+body.dark #settings{background:#1f1f1f;color:#fff;}
 #settings h4{margin:0 0 4px 0;font-size:1rem;}
 #settings label{display:block;margin-top:6px;}
 #settings input[type="checkbox"]{margin-right:4px;}
@@ -21,7 +21,7 @@ header{position:fixed;top:0;width:100%;height:50px;display:flex;justify-content:
 #fav-brands{display:none;margin-top:6px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;font-size:0.75rem;}
 main{margin-top:55px;width:95%;max-width:500px;display:flex;flex-direction:column;align-items:center;}
 .card{display:flex;flex-direction:column;width:100%;background:#fff;border-radius:12px;overflow:hidden;transition:0.4s;}
-.dark-mode .card{background:#1f1f1f;}
+body.dark .card{background:#1f1f1f;}
 .card img{width:100%;object-fit:contain;}
 .card .info{padding:8px;display:flex;flex-direction:column;}
 .info h2{font-size:1rem;margin:2px 0;}
@@ -34,7 +34,7 @@ button:hover{opacity:0.9;transform:scale(1.03);}
 #favorite-btn{background:#e74c3c;color:#fff;}
 #vinted-btn{background:#27ae60;color:#fff;}
 .popup{position:fixed;background:#fff;padding:8px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.2);width:80%;max-width:280px;display:none;max-height:60%;overflow-y:auto;z-index:200;font-size:0.75rem;}
-.dark-mode .popup{background:#1f1f1f;color:#fff;}
+body.dark .popup{background:#1f1f1f;color:#fff;}
 .popup .popup-close{position:absolute;top:4px;right:6px;cursor:pointer;font-weight:bold;font-size:1rem;}
 .item-list div{display:flex;gap:6px;margin-bottom:4px;align-items:center;}
 .item-list img{width:40px;height:40px;object-fit:cover;border-radius:4px;}
@@ -45,15 +45,18 @@ button:hover{opacity:0.9;transform:scale(1.03);}
 </head>
 <body>
 
-<header><div id="settings-toggle">⚙️</div></header>
+<header>
+<div id="settings-toggle">⚙️</div>
+</header>
 
 <div id="settings">
-<h4>⚙️ Paramètres VIP</h4>
+<h4>⚙️ Paramètres</h4>
 <div class="vip-section">
 <button id="vip-btn">💎 Activer VIP</button>
 <button id="favorites-view">❤️ Favoris</button>
 <button id="history-view">🕘 Historique</button>
 <label id="notif-label" style="display:none;">🔔 <input type="checkbox" id="notif-best"> Meilleurs articles</label>
+<label><input type="checkbox" id="darkToggle"> 🌙 Mode sombre</label>
 <div id="fav-brands">
 <label><input type="checkbox" class="brand-check" value="Nike">Nike</label>
 <label><input type="checkbox" class="brand-check" value="Dior">Dior</label>
@@ -119,7 +122,6 @@ document.getElementById("favorite-btn").style.display=isVIP?"inline-block":"none
 document.getElementById("best-btn").style.display=(isVIP && bestArticles.length>0)?"block":"none";
 }
 
-// VIP activation
 document.getElementById("vip-btn").addEventListener("click",()=>{
 isVIP=true;
 document.getElementById("vip-btn").textContent="⭐ VIP Actif";
@@ -130,20 +132,17 @@ document.getElementById("fav-brands").style.display="grid";
 showItem();
 });
 
-// Skip
 document.getElementById("skip-btn").addEventListener("click",()=>{
 history.push(items[index]);
 if(isVIP && notifBest && Math.random()<0.5){bestArticles.push(items[index]);document.getElementById("best-btn").classList.add("blink");}
 index=(index+1)%items.length;showItem();
 });
 
-// Favoris
 document.getElementById("favorite-btn").addEventListener("click",()=>{
 if(!favorites.includes(items[index]))favorites.push(items[index]);
 showItem();
 });
 
-// Historique popup
 document.getElementById("history-view").addEventListener("click",()=>{
 const popup=document.getElementById("history-popup");
 popup.innerHTML='<span class="popup-close">✖</span><h4>🕘 Historique</h4><div class="item-list"></div>';
@@ -157,7 +156,6 @@ popup.style.display="block";
 popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
 });
 
-// Favoris popup
 document.getElementById("favorites-view").addEventListener("click",()=>{
 const popup=document.getElementById("favorites-popup");
 popup.innerHTML='<span class="popup-close">✖</span><h4>❤️ Favoris</h4><div class="item-list"></div>';
@@ -171,7 +169,6 @@ popup.style.display="block";
 popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
 });
 
-// Best articles popup
 document.getElementById("best-btn").addEventListener("click",()=>{
 if(bestArticles.length===0){alert("😔 Pas de meilleurs articles");return;}
 const popup=document.getElementById("best-popup");
@@ -187,20 +184,19 @@ popup.style.display="block";
 popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
 });
 
-// Dark mode
-document.getElementById("darkToggle")?.addEventListener("change",()=>document.body.classList.toggle("dark-mode"));
-// Settings toggle
+document.getElementById("darkToggle").addEventListener("change",()=>document.body.classList.toggle("dark"));
+
 document.getElementById("settings-toggle").addEventListener("click",()=>{
 const s=document.getElementById("settings");s.style.display=(s.style.display==="block"?"none":"block");
 });
-// Marques VIP filter
+
 document.querySelectorAll(".brand-check").forEach(cb=>{
 cb.addEventListener("change",()=>{
 favBrands=Array.from(document.querySelectorAll(".brand-check")).filter(b=>b.checked).map(b=>b.value);
 showItem();
 });
 });
-// Notification checkbox
+
 document.getElementById("notif-best").addEventListener("change",()=>{
 notifBest=document.getElementById("notif-best").checked;
 });
