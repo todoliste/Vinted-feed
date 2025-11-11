@@ -10,153 +10,172 @@
     --accent:#2f80ed; --vip:#f5b041; --good:#2ecc71; --good-dark:#1e8449;
     --muted:#9aa3b2;
   }
-  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:var(--text);display:flex;flex-direction:column;align-items:center;min-height:100vh;transition:background .25s,color .25s}
-  body.dark{
-    --bg:#0f1113; 
-    --card:#141518; 
-    --text:#e6eef6; 
-    --muted:#718096;
-    background-color: var(--bg);
-    color: var(--text);
+  body{
+    margin:0;
+    font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height:100vh;
+    transition:background .25s,color .25s;
   }
-  header{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:flex-end;padding:0 14px;background:rgba(255,255,255,0.6);backdrop-filter:blur(6px);z-index:50;box-shadow:0 1px 8px rgba(0,0,0,.04)}
-  body.dark header{background:rgba(10,10,10,0.5)}
-  #settings-toggle{cursor:pointer;font-size:20px;padding:8px;border-radius:8px}
-  /* settings small popup */
-  #settings{position:fixed;top:74px;right:10px;width:240px;padding:8px;border-radius:12px;background:var(--card);box-shadow:0 8px 30px rgba(2,6,23,.12);display:none;z-index:60}
-  #settings h4{margin:4px 0 8px 0;font-size:14px;text-align:center}
-  #settings label{display:block;font-size:13px;margin:6px 0;color:var(--muted)}
-  .vip-section button{width:100%;padding:8px;border-radius:10px;border:0;font-weight:700;cursor:pointer;margin-top:6px}
-  #vip-btn{background:linear-gradient(90deg,var(--vip),#e67e22);color:#111}
-  #favorites-view,#history-view{background:var(--accent);color:#fff;display:none}
-  #notif-label{display:none;font-size:13px}
-  /* brand grid (VIP only) */
-  .brand-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
-  .brand-cell{background:rgba(0,0,0,.03);padding:6px;border-radius:8px;text-align:center;font-size:12px;cursor:pointer;user-select:none;transition:transform .15s,background .15s,color .15s}
-  .brand-cell:hover{transform:translateY(-3px)}
-  .brand-cell[data-active="true"]{background:linear-gradient(90deg,var(--good),#2bd37f);color:#04260a}
-  .brand-cell[data-active="false"]{background:rgba(0,0,0,.04);color:var(--muted)}
-  body.dark .brand-cell{background:rgba(255,255,255,0.03)}
-  body.dark .brand-cell[data-active="true"]{background:linear-gradient(90deg,var(--good-dark),#1abc9c);color:#e6fff1}
-  /* main card */
-  main{margin-top:84px;width:92%;max-width:760px;display:flex;flex-direction:column;align-items:center}
-  .card{width:100%;border-radius:14px;background:var(--card);overflow:hidden;box-shadow:0 10px 30px rgba(10,20,40,.06);transition:transform .45s,opacity .35s}
-  .media{height:260px;background:#f0f3f7;display:flex;align-items:center;justify-content:center}
-  .media img{max-width:100%;max-height:100%;object-fit:contain;transition:transform .25s}
-  .info{padding:12px}
-  .info h2{margin:0;font-size:18px}
-  .info p{margin:6px 0;color:var(--muted);font-size:13px}
-  .price{color:var(--accent);font-weight:800;margin-top:6px}
-  .btns{display:flex;gap:8px;justify-content:center;padding:12px;flex-wrap:wrap}
-  .btn{padding:8px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-  .btn.ghost{background:rgba(0,0,0,0.06)}
-  .btn.skip{background:#6b7280;color:#fff}
-  .btn.fav{background:#ef4444;color:#fff}
-  .btn.vinted{background:#16a34a;color:#fff}
-  /* small popups (compact) */
-  .popup{position:fixed;left:50%;transform:translateX(-50%);min-width:260px;max-width:360px;background:var(--card);padding:10px;border-radius:12px;box-shadow:0 12px 30px rgba(2,6,23,.12);z-index:80;display:none}
-  .popup h4{margin:0 0 6px 0;font-size:15px}
-  .item-list{display:flex;flex-direction:column;gap:8px}
-  .item-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .item-row .left{display:flex;gap:8px;align-items:center}
-  .item-row img{width:44px;height:44px;border-radius:8px;object-fit:cover}
-  .item-row button{padding:6px 8px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer;font-weight:700}
-  /* payment bottom sheet */
-  #payment-sheet{position:fixed;left:50%;transform:translate(-50%,110%);bottom:12px;width:92%;max-width:420px;background:var(--card);border-radius:14px;padding:12px;box-shadow:0 20px 50px rgba(2,6,23,.2);z-index:200;display:none;opacity:0;transition:transform .45s ease,opacity .3s}
-  #payment-sheet.show{transform:translate(-50%,0);opacity:1;display:block}
-  #payment-sheet h4{margin:0 0 8px 0}
-  #payment-sheet p{margin:6px 0;color:var(--muted);font-size:13px}
-  .pay-actions{display:flex;gap:8px;margin-top:10px;justify-content:space-between}
-  .pay-btn{flex:1;padding:10px;border-radius:10px;border:0;font-weight:800;cursor:pointer}
-  .paypal{background:#ffc439;color:#000}
-  .cancel{background:rgba(0,0,0,.06)}
+  body.dark{
+    --bg:#0f1113;
+    --card:#141518;
+    --text:#e6eef6;
+    --muted:#718096;
+    background:var(--bg);
+    color:var(--text);
+  }
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:64px;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    padding:0 14px;
+    background:rgba(255,255,255,0.6);
+    backdrop-filter:blur(6px);
+    z-index:50;
+    box-shadow:0 1px 8px rgba(0,0,0,.04);
+  }
+  body.dark header{background:rgba(10,10,10,0.5);}
+  #settings-toggle{cursor:pointer;font-size:20px;padding:8px;border-radius:8px;}
+  #settings{
+    position:fixed;
+    top:74px; right:10px;
+    width:240px; padding:8px;
+    border-radius:12px;
+    background:var(--card);
+    box-shadow:0 8px 30px rgba(2,6,23,.12);
+    display:none;
+    z-index:60;
+  }
+  #settings h4{margin:4px 0 8px 0;font-size:14px;text-align:center;}
+  #settings label{display:block;font-size:13px;margin:6px 0;color:var(--muted);}
+  .vip-section button{
+    width:100%;padding:8px;border-radius:10px;border:0;font-weight:700;cursor:pointer;margin-top:6px;
+  }
+  #vip-btn{background:linear-gradient(90deg,var(--vip),#e67e22);color:#111;}
+  #favorites-view,#history-view{background:var(--accent);color:#fff;display:none;}
+  .brand-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
+  .brand-cell{
+    background:rgba(0,0,0,.03);
+    padding:6px;border-radius:8px;text-align:center;font-size:12px;cursor:pointer;
+    user-select:none;transition:transform .15s,background .15s,color .15s;
+  }
+  .brand-cell:hover{transform:translateY(-3px);}
+  .brand-cell[data-active="true"]{background:linear-gradient(90deg,var(--good),#2bd37f);color:#04260a;}
+  .brand-cell[data-active="false"]{background:rgba(0,0,0,.04);color:var(--muted);}
+  body.dark .brand-cell{background:rgba(255,255,255,0.03);}
+  body.dark .brand-cell[data-active="true"]{background:linear-gradient(90deg,var(--good-dark),#1abc9c);color:#e6fff1;}
+  main{margin-top:84px;width:92%;max-width:760px;display:flex;flex-direction:column;align-items:center;}
+  .card{width:100%;border-radius:14px;background:var(--card);overflow:hidden;box-shadow:0 10px 30px rgba(10,20,40,.06);transition:transform .45s,opacity .35s;}
+  .media{height:260px;background:#f0f3f7;display:flex;align-items:center;justify-content:center;}
+  .media img{max-width:100%;max-height:100%;object-fit:contain;transition:transform .25s;}
+  .info{padding:12px;}
+  .info h2{margin:0;font-size:18px;}
+  .info p{margin:6px 0;color:var(--muted);font-size:13px;}
+  .price{color:var(--accent);font-weight:800;margin-top:6px;}
+  .btns{display:flex;gap:8px;justify-content:center;padding:12px;flex-wrap:wrap;}
+  .btn{padding:8px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer;}
+  .btn.skip{background:#6b7280;color:#fff;}
+  .btn.fav{background:#ef4444;color:#fff;}
+  .btn.vinted{background:#16a34a;color:#fff;}
 </style>
 </head>
 <body>
-  <header>
-    <div id="settings-toggle" title="Paramètres">⚙️</div>
-  </header>
+<header>
+  <div id="settings-toggle" title="Paramètres">⚙️</div>
+</header>
 
-  <div id="settings" aria-hidden="true">
-    <h4>Paramètres</h4>
-    <label><input id="darkToggle" type="checkbox"> Mode sombre</label>
+<div id="settings" aria-hidden="true">
+  <h4>Paramètres</h4>
+  <label><input id="darkToggle" type="checkbox"> Mode sombre</label>
+  <div class="vip-section" style="margin-top:8px">
+    <h4 style="margin:6px 0 6px 0;font-size:14px">⭐ VIP</h4>
+    <button id="vip-btn">💎 Devenir VIP</button>
+    <button id="favorites-view">❤️ Favoris</button>
+    <button id="history-view">🕘 Historique</button>
 
-    <div class="vip-section" style="margin-top:8px">
-      <h4 style="margin:6px 0 6px 0;font-size:14px">⭐ VIP</h4>
-      <button id="vip-btn">💎 Devenir VIP</button>
-      <button id="favorites-view">❤️ Favoris</button>
-      <button id="history-view">🕘 Historique</button>
-      <div id="fav-brands" class="brand-grid" style="display:none">
-        <!-- 20 marques -->
-        <div class="brand-cell" data-brand="Nike" data-active="false">👟<br>Nike</div>
-        <div class="brand-cell" data-brand="Adidas" data-active="false">⚡<br>Adidas</div>
-        <div class="brand-cell" data-brand="Moncler" data-active="false">🧥<br>Moncler</div>
-        <div class="brand-cell" data-brand="CP Company" data-active="false">🧢<br>CP Co</div>
-        <div class="brand-cell" data-brand="Ralph Lauren" data-active="false">🐎<br>Ralph</div>
-        <div class="brand-cell" data-brand="Gucci" data-active="false">💎<br>Gucci</div>
-        <div class="brand-cell" data-brand="Louis Vuitton" data-active="false">👜<br>LV</div>
-        <div class="brand-cell" data-brand="Stone Island" data-active="false">⛓<br>Stone</div>
-        <div class="brand-cell" data-brand="Supreme" data-active="false">🔥<br>Supreme</div>
-        <div class="brand-cell" data-brand="Tommy Hilfiger" data-active="false">🏴<br>Tommy</div>
-        <div class="brand-cell" data-brand="New Balance" data-active="false">🏃‍♂️<br>NB</div>
-        <div class="brand-cell" data-brand="Vans" data-active="false">👟<br>Vans</div>
-        <div class="brand-cell" data-brand="Reebok" data-active="false">⚡<br>Reebok</div>
-        <div class="brand-cell" data-brand="Carhartt" data-active="false">🛠<br>Carhartt</div>
-        <div class="brand-cell" data-brand="Patagonia" data-active="false">🏔<br>Patagonia</div>
-        <div class="brand-cell" data-brand="Fendi" data-active="false">🎀<br>Fendi</div>
-        <div class="brand-cell" data-brand="Balenciaga" data-active="false">👟<br>Balenciaga</div>
-        <div class="brand-cell" data-brand="Dior" data-active="false">✨<br>Dior</div>
-        <div class="brand-cell" data-brand="H&M" data-active="false">👕<br>H&M</div>
-        <div class="brand-cell" data-brand="Zara" data-active="false">🧥<br>Zara</div>
-      </div>
+    <div id="fav-brands" class="brand-grid" style="display:none">
+      <div class="brand-cell" data-brand="Nike" data-active="false">👟<br>Nike</div>
+      <div class="brand-cell" data-brand="Adidas" data-active="false">⚡<br>Adidas</div>
+      <div class="brand-cell" data-brand="Moncler" data-active="false">🧥<br>Moncler</div>
+      <div class="brand-cell" data-brand="CP Company" data-active="false">🧢<br>CP Co</div>
+      <div class="brand-cell" data-brand="Ralph Lauren" data-active="false">🐎<br>Ralph</div>
+      <div class="brand-cell" data-brand="Gucci" data-active="false">💎<br>Gucci</div>
+      <div class="brand-cell" data-brand="Louis Vuitton" data-active="false">👜<br>LV</div>
+      <div class="brand-cell" data-brand="Stone Island" data-active="false">⛓<br>Stone</div>
+      <div class="brand-cell" data-brand="Supreme" data-active="false">🔥<br>Supreme</div>
+      <div class="brand-cell" data-brand="Tommy Hilfiger" data-active="false">🏴<br>Tommy</div>
+      <div class="brand-cell" data-brand="New Balance" data-active="false">🏃‍♂️<br>NB</div>
+      <div class="brand-cell" data-brand="Vans" data-active="false">👟<br>Vans</div>
+      <div class="brand-cell" data-brand="Reebok" data-active="false">⚡<br>Reebok</div>
+      <div class="brand-cell" data-brand="Carhartt" data-active="false">🛠<br>Carhartt</div>
+      <div class="brand-cell" data-brand="Patagonia" data-active="false">🏔<br>Patagonia</div>
+      <div class="brand-cell" data-brand="Fendi" data-active="false">🎀<br>Fendi</div>
+      <div class="brand-cell" data-brand="Balenciaga" data-active="false">👟<br>Balenciaga</div>
+      <div class="brand-cell" data-brand="Dior" data-active="false">✨<br>Dior</div>
+      <div class="brand-cell" data-brand="H&M" data-active="false">👕<br>H&M</div>
+      <div class="brand-cell" data-brand="Zara" data-active="false">🧥<br>Zara</div>
     </div>
   </div>
+</div>
 
-  <main>
-    <div class="card" id="card">
-      <div class="media"><img id="item-img" src="" alt="article"></div>
-      <div class="info">
-        <h2 id="item-title"></h2>
-        <p id="item-brand"></p>
-        <p id="item-size"></p>
-        <p id="item-condition"></p>
-        <div class="price" id="item-price"></div>
-      </div>
-    </div>
-
-    <div class="btns">
-      <button class="btn skip" id="skip-btn">⏭ Passer</button>
-      <button class="btn fav" id="favorite-btn" style="display:none">❤️ Favoris</button>
-      <button class="btn vinted" id="vinted-btn">🛍 Voir sur Vinted</button>
-    </div>
-  </main>
-
-  <div id="history-popup" class="popup" style="top:90px"></div>
-  <div id="favorites-popup" class="popup" style="top:90px"></div>
-
-  <div id="payment-sheet" role="dialog" aria-modal="true">
-    <h4>💳 Devenir VIP</h4>
-    <p><strong>Prix :</strong> 9,99€ / mois</p>
-    <p style="color:var(--muted);font-size:13px;margin:6px 0">Fonctionnalités : Favoris, Historique, Marques favorites filtrables.</p>
-    <div style="display:flex;gap:8px" class="pay-actions">
-      <button class="pay-btn paypal" id="pay-paypal">Payer (PayPal)</button>
-      <button class="pay-btn cancel" id="pay-cancel">Annuler</button>
+<main>
+  <div class="card" id="card">
+    <div class="media"><img id="item-img" src="" alt="article"></div>
+    <div class="info">
+      <h2 id="item-title"></h2>
+      <p id="item-brand"></p>
+      <p id="item-size"></p>
+      <p id="item-condition"></p>
+      <div class="price" id="item-price"></div>
     </div>
   </div>
+  <div class="btns">
+    <button class="btn skip" id="skip-btn">⏭ Passer</button>
+    <button class="btn fav" id="favorite-btn" style="display:none">❤️ Favoris</button>
+    <button class="btn vinted" id="vinted-btn">🛍 Voir sur Vinted</button>
+  </div>
+</main>
 
-  <script>
-    const darkToggle = document.getElementById('darkToggle');
+<div id="history-popup" class="popup" style="top:90px"></div>
+<div id="favorites-popup" class="popup" style="top:90px"></div>
 
-    // Charger thème précédent
-    if(localStorage.getItem('theme') === 'dark'){
-      document.body.classList.add('dark');
-      darkToggle.checked = true;
-    }
+<div id="payment-sheet" role="dialog" aria-modal="true">
+  <h4>💳 Devenir VIP</h4>
+  <p><strong>Prix :</strong> 9,99€ / mois</p>
+  <p style="color:var(--muted);font-size:13px;margin:6px 0">Fonctionnalités : Favoris, Historique, Marques favorites filtrables.</p>
+  <div style="display:flex;gap:8px" class="pay-actions">
+    <button class="pay-btn paypal" id="pay-paypal">Payer (PayPal)</button>
+    <button class="pay-btn cancel" id="pay-cancel">Annuler</button>
+  </div>
+</div>
 
-    darkToggle.addEventListener('change', ()=>{
-      document.body.classList.toggle('dark', darkToggle.checked);
-      localStorage.setItem('theme', darkToggle.checked ? 'dark' : 'light');
-    });
-  </script>
+<script>
+const settingsToggle = document.getElementById('settings-toggle');
+const settings = document.getElementById('settings');
+const darkToggle = document.getElementById('darkToggle');
+
+settingsToggle.addEventListener('click', ()=>{
+  settings.style.display = settings.style.display === 'block' ? 'none' : 'block';
+});
+
+// charger thème précédent
+if(localStorage.getItem('theme') === 'dark'){
+  document.body.classList.add('dark');
+  darkToggle.checked = true;
+}
+
+darkToggle.addEventListener('change', ()=>{
+  document.body.classList.toggle('dark', darkToggle.checked);
+  localStorage.setItem('theme', darkToggle.checked ? 'dark' : 'light');
+});
+</script>
 </body>
 </html>
