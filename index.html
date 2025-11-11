@@ -1,382 +1,301 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Vinted VIP — Démo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinted VIP Demo</title>
 <style>
-  :root{
-    --bg:#f5f7fb; --card:#ffffff; --text:#222;
-    --accent:#2f80ed; --vip:#f5b041; --good:#2ecc71; --good-dark:#1e8449;
-    --muted:#9aa3b2;
-  }
-  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:var(--text);display:flex;flex-direction:column;align-items:center;min-height:100vh;transition:background .25s,color .25s}
-  body.dark{--bg:#0f1113;--card:#141518;--text:#e6eef6;--muted:#718096}
-  header{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:flex-end;padding:0 14px;background:rgba(255,255,255,0.6);backdrop-filter:blur(6px);z-index:50;box-shadow:0 1px 8px rgba(0,0,0,.04)}
-  body.dark header{background:rgba(10,10,10,0.5)}
-  #settings-toggle{cursor:pointer;font-size:20px;padding:8px;border-radius:8px}
-  /* settings small popup */
-  #settings{position:fixed;top:74px;right:10px;width:240px;padding:8px;border-radius:12px;background:var(--card);box-shadow:0 8px 30px rgba(2,6,23,.12);display:none;z-index:60}
-  #settings h4{margin:4px 0 8px 0;font-size:14px;text-align:center}
-  #settings label{display:block;font-size:13px;margin:6px 0;color:var(--muted)}
-  .vip-section button{width:100%;padding:8px;border-radius:10px;border:0;font-weight:700;cursor:pointer;margin-top:6px}
-  #vip-btn{background:linear-gradient(90deg,var(--vip),#e67e22);color:#111}
-  #favorites-view,#history-view{background:var(--accent);color:#fff;display:none}
-  #notif-label{display:none;font-size:13px}
-  /* brand grid (VIP only) */
-  .brand-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
-  .brand-cell{background:rgba(0,0,0,.03);padding:6px;border-radius:8px;text-align:center;font-size:12px;cursor:pointer;user-select:none;transition:transform .15s,background .15s,color .15s}
-  .brand-cell:hover{transform:translateY(-3px)}
-  .brand-cell[data-active="true"]{background:linear-gradient(90deg,var(--good),#2bd37f);color:#04260a}
-  .brand-cell[data-active="false"]{background:rgba(0,0,0,.04);color:var(--muted)}
-  body.dark .brand-cell{background:rgba(255,255,255,0.03)}
-  body.dark .brand-cell[data-active="true"]{background:linear-gradient(90deg,var(--good-dark),#1abc9c);color:#e6fff1}
-  /* main card */
-  main{margin-top:84px;width:92%;max-width:760px;display:flex;flex-direction:column;align-items:center}
-  .card{width:100%;border-radius:14px;background:var(--card);overflow:hidden;box-shadow:0 10px 30px rgba(10,20,40,.06);transition:transform .45s,opacity .35s}
-  .media{height:260px;background:#f0f3f7;display:flex;align-items:center;justify-content:center}
-  .media img{max-width:100%;max-height:100%;object-fit:contain;transition:transform .25s}
-  .info{padding:12px}
-  .info h2{margin:0;font-size:18px}
-  .info p{margin:6px 0;color:var(--muted);font-size:13px}
-  .price{color:var(--accent);font-weight:800;margin-top:6px}
-  .btns{display:flex;gap:8px;justify-content:center;padding:12px;flex-wrap:wrap}
-  .btn{padding:8px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-  .btn.ghost{background:rgba(0,0,0,0.06)}
-  .btn.skip{background:#6b7280;color:#fff}
-  .btn.fav{background:#ef4444;color:#fff}
-  .btn.vinted{background:#16a34a;color:#fff}
-  /* small popups (compact) */
-  .popup{position:fixed;left:50%;transform:translateX(-50%);min-width:260px;max-width:360px;background:var(--card);padding:10px;border-radius:12px;box-shadow:0 12px 30px rgba(2,6,23,.12);z-index:80;display:none}
-  .popup h4{margin:0 0 6px 0;font-size:15px}
-  .item-list{display:flex;flex-direction:column;gap:8px}
-  .item-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .item-row .left{display:flex;gap:8px;align-items:center}
-  .item-row img{width:44px;height:44px;border-radius:8px;object-fit:cover}
-  .item-row button{padding:6px 8px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer;font-weight:700}
-  /* payment bottom sheet */
-  #payment-sheet{position:fixed;left:50%;transform:translate(-50%,110%);bottom:12px;width:92%;max-width:420px;background:var(--card);border-radius:14px;padding:12px;box-shadow:0 20px 50px rgba(2,6,23,.2);z-index:200;display:none;opacity:0;transition:transform .45s ease,opacity .3s}
-  #payment-sheet.show{transform:translate(-50%,0);opacity:1;display:block}
-  #payment-sheet h4{margin:0 0 8px 0}
-  #payment-sheet p{margin:6px 0;color:var(--muted);font-size:13px}
-  .pay-actions{display:flex;gap:8px;margin-top:10px;justify-content:space-between}
-  .pay-btn{flex:1;padding:10px;border-radius:10px;border:0;font-weight:800;cursor:pointer}
-  .paypal{background:#ffc439;color:#000}
-  .cancel{background:rgba(0,0,0,.06)}
-  /* floating heart animation */
-  .float-heart{position:fixed;left:50%;transform:translateX(-50%);top:40%;font-size:32px;opacity:0;pointer-events:none;animation:pop 900ms ease forwards}
-  @keyframes pop{0%{transform:translate(-50%,0) scale(.6);opacity:0}30%{opacity:1;transform:translate(-50%,-40px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-80px) scale(.9)}}
-  /* card skip animation */
-  .card.slide-left{transform:translateX(-120%) rotate(-8deg) scale(.92);opacity:0}
-  .card.zoom{transform:scale(1.03)}
-  /* small responsive */
-  @media(max-width:420px){
-    .brand-grid{grid-template-columns:repeat(3,1fr)}
-    .media{height:200px}
-    #settings{width:86%;right:6%;top:72px}
-    #payment-sheet{left:50%;bottom:10px}
-  }
+/* ======= RESET & BASE ======= */
+body {
+  margin:0; font-family:sans-serif; background:#f5f5f5; color:#333;
+  display:flex; flex-direction:column; align-items:center; min-height:100vh;
+  transition: background 0.3s, color 0.3s;
+}
+.dark-mode { background:#121212; color:#fff; }
+
+header {
+  position:fixed; top:0; width:100%; height:60px;
+  display:flex; justify-content:flex-end; align-items:center;
+  padding:0 16px; background:rgba(255,255,255,0.9); backdrop-filter:blur(6px);
+  box-shadow:0 1px 8px rgba(0,0,0,0.05); z-index:100; transition:background 0.3s;
+}
+.dark-mode header { background:rgba(25,25,25,0.9); }
+
+#settings-toggle { cursor:pointer; font-size:1.5rem; }
+
+#settings {
+  position:fixed; top:70px; right:10px; background:#fff; border-radius:12px;
+  padding:12px; width:260px; display:none; z-index:99; box-shadow:0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s;
+}
+.dark-mode #settings { background:#1f1f1f; color:#fff; }
+
+#settings h4 { margin:0 0 6px 0; font-size:1.1em; }
+#settings label { display:block; margin-top:8px; font-size:0.9em; cursor:pointer; }
+#settings input[type="checkbox"] { margin-right:6px; }
+
+/* VIP SECTION */
+.vip-section button {
+  margin-top:6px; width:100%; padding:8px; border-radius:8px; border:none;
+  cursor:pointer; font-weight:600; transition:0.3s;
+}
+.vip-section button#vip-btn { background:linear-gradient(90deg,gold,orange); color:#fff; }
+.vip-section button:hover { filter:brightness(1.1); transform:scale(1.02); }
+.vip-section button#favorites-view, .vip-section button#history-view { background:#2f80ed; color:#fff; display:none; }
+
+/* MAIN CARD */
+main { margin-top:70px; width:90%; max-width:800px; display:flex; flex-direction:column; align-items:center; }
+.card {
+  display:flex; flex-direction:column; width:100%; background:#fff; border-radius:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08); overflow:hidden; position:relative;
+  transition: transform 0.5s ease, opacity 0.4s ease;
+}
+.dark-mode .card { background:#1f1f1f; }
+.card img { width:100%; object-fit:contain; background:#f9f9f9; transition: transform 0.3s; }
+.card img:hover { transform:scale(1.03); }
+.card .info { padding:12px; display:flex; flex-direction:column; }
+.info h2 { font-size:1.2rem; margin:4px 0; }
+.info p { font-size:0.95rem; margin:2px 0; }
+.price { color:#2f80ed; font-weight:600; margin-top:6px; }
+
+/* BUTTONS */
+.btns { display:flex; justify-content:center; gap:10px; margin-top:12px; flex-wrap:wrap; }
+button { cursor:pointer; padding:10px 20px; border:none; border-radius:10px; font-weight:600; transition:0.3s; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+button:hover { transform:scale(1.05); box-shadow:0 0 12px rgba(63,191,191,0.6); }
+#skip-btn { background:#666; color:#fff; }
+#favorite-btn { background:#e74c3c; color:#fff; }
+#vinted-btn { background:#27ae60; color:#fff; }
+
+/* POPUP */
+.popup {
+  position:fixed; background:#fff; padding:12px; border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2); width:90%; max-width:300px;
+  display:none; max-height:400px; overflow-y:auto; z-index:200;
+}
+.dark-mode .popup { background:#1f1f1f; color:#fff; }
+.popup .popup-close { position:absolute; top:6px; right:8px; cursor:pointer; font-weight:bold; font-size:1.2rem; }
+.item-list div { display:flex; gap:10px; margin-bottom:8px; align-items:center; }
+.item-list img { width:50px; height:50px; object-fit:cover; border-radius:6px; }
+
+/* BEST BUTTON */
+#best-btn {
+  position:fixed; top:10px; left:10px; z-index:101; padding:8px 12px; border-radius:8px;
+  border:none; font-weight:bold; cursor:pointer; background:#2f80ed; color:white; display:none;
+  animation: pulse 1.2s infinite;
+}
+@keyframes pulse { 0%{transform:scale(1);} 50%{transform:scale(1.1);} 100%{transform:scale(1);} }
+
+/* ANIMATIONS CARD */
+.card.slide-left { transform:translateX(-120%) rotate(-10deg) scale(0.9); opacity:0; }
+.card.zoom-in { transform:scale(1.05); opacity:1; transition:0.5s; }
+
+/* MEDIA */
+@media(max-width:700px){
+  main{width:95%;}
+  .card img{width:100%; height:auto;}
+  #settings{width:85%; right:7.5%;}
+  .brand-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:5px;}
+}
+.brand-btn { padding:6px; border-radius:12px; border:1px solid #ccc; cursor:pointer; text-align:center; transition:0.3s; }
+.brand-btn.active { background:limegreen; color:#fff; border-color:#0a0; }
+.brand-btn.inactive { background:#2f2f2f; color:#ccc; border-color:#444; }
+
+/* VIP PAYMENT POPUP */
+#vip-popup .pay-btn { background:linear-gradient(90deg,gold,orange); color:#fff; width:100%; padding:8px; border:none; border-radius:8px; margin-top:8px; cursor:pointer; transition:0.3s; }
+#vip-popup .pay-btn:hover { filter:brightness(1.1); }
 </style>
 </head>
 <body>
-  <header>
-    <div id="settings-toggle" title="Paramètres">⚙️</div>
-  </header>
 
-  <div id="settings" aria-hidden="true">
-    <h4>Paramètres</h4>
-    <label><input id="darkToggle" type="checkbox"> Mode sombre</label>
+<header>
+  <div id="settings-toggle">⚙️</div>
+</header>
 
-    <div class="vip-section" style="margin-top:8px">
-      <h4 style="margin:6px 0 6px 0;font-size:14px">⭐ VIP</h4>
-      <button id="vip-btn">💎 Devenir VIP</button>
-      <button id="favorites-view">❤️ Favoris</button>
-      <button id="history-view">🕘 Historique</button>
-      <label id="notif-label" style="display:none;margin-top:8px"><input id="notif-best" type="checkbox"> 🔔 Notifications meilleurs articles</label>
+<div id="settings">
+<h4>⚙️ Paramètres</h4>
+<label><input type="checkbox" id="darkToggle"> 🌙 Mode sombre</label>
 
-      <div id="fav-brands" class="brand-grid" style="display:none">
-        <!-- 20 marques -->
-        <div class="brand-cell" data-brand="Nike" data-active="false">👟<br>Nike</div>
-        <div class="brand-cell" data-brand="Adidas" data-active="false">⚡<br>Adidas</div>
-        <div class="brand-cell" data-brand="Moncler" data-active="false">🧥<br>Moncler</div>
-        <div class="brand-cell" data-brand="CP Company" data-active="false">🧢<br>CP Co</div>
-        <div class="brand-cell" data-brand="Ralph Lauren" data-active="false">🐎<br>Ralph</div>
-        <div class="brand-cell" data-brand="Gucci" data-active="false">💎<br>Gucci</div>
-        <div class="brand-cell" data-brand="Louis Vuitton" data-active="false">👜<br>LV</div>
-        <div class="brand-cell" data-brand="Stone Island" data-active="false">⛓<br>Stone</div>
-        <div class="brand-cell" data-brand="Supreme" data-active="false">🔥<br>Supreme</div>
-        <div class="brand-cell" data-brand="Tommy Hilfiger" data-active="false">🏴<br>Tommy</div>
-        <div class="brand-cell" data-brand="New Balance" data-active="false">🏃‍♂️<br>NB</div>
-        <div class="brand-cell" data-brand="Vans" data-active="false">👟<br>Vans</div>
-        <div class="brand-cell" data-brand="Reebok" data-active="false">⚡<br>Reebok</div>
-        <div class="brand-cell" data-brand="Carhartt" data-active="false">🛠<br>Carhartt</div>
-        <div class="brand-cell" data-brand="Patagonia" data-active="false">🏔<br>Patagonia</div>
-        <div class="brand-cell" data-brand="Fendi" data-active="false">🎀<br>Fendi</div>
-        <div class="brand-cell" data-brand="Balenciaga" data-active="false">👟<br>Balenciaga</div>
-        <div class="brand-cell" data-brand="Dior" data-active="false">✨<br>Dior</div>
-        <div class="brand-cell" data-brand="H&M" data-active="false">👕<br>H&M</div>
-        <div class="brand-cell" data-brand="Zara" data-active="false">🧥<br>Zara</div>
-      </div>
-    </div>
-  </div>
+<div class="vip-section">
+<h4>⭐ VIP</h4>
+<button id="vip-btn">💎 Obtenir VIP</button>
+<button id="favorites-view">❤️ Favoris</button>
+<button id="history-view">🕘 Historique</button>
+<label id="notif-label" style="display:none;">🔔 Notifications meilleurs articles <input type="checkbox" id="notif-best"></label>
 
-  <button id="best-btn" title="Meilleurs articles">☹ Meilleurs articles</button>
+<h4>💖 Marques favorites</h4>
+<div class="brand-grid" id="fav-brands" style="display:none;">
+  <div class="brand-btn inactive" data-brand="Nike">Nike</div>
+  <div class="brand-btn inactive" data-brand="Adidas">Adidas</div>
+  <div class="brand-btn inactive" data-brand="Moncler">Moncler</div>
+  <div class="brand-btn inactive" data-brand="CP Company">CP Company</div>
+  <div class="brand-btn inactive" data-brand="Ralph Lauren">Ralph Lauren</div>
+  <div class="brand-btn inactive" data-brand="Gucci">Gucci</div>
+  <div class="brand-btn inactive" data-brand="Louis Vuitton">Louis Vuitton</div>
+  <div class="brand-btn inactive" data-brand="Stone Island">Stone Island</div>
+  <div class="brand-btn inactive" data-brand="Supreme">Supreme</div>
+  <div class="brand-btn inactive" data-brand="Balenciaga">Balenciaga</div>
+  <div class="brand-btn inactive" data-brand="Dior">Dior</div>
+  <div class="brand-btn inactive" data-brand="Fendi">Fendi</div>
+  <div class="brand-btn inactive" data-brand="Puma">Puma</div>
+  <div class="brand-btn inactive" data-brand="Vans">Vans</div>
+  <div class="brand-btn inactive" data-brand="Reebok">Reebok</div>
+  <div class="brand-btn inactive" data-brand="Patagonia">Patagonia</div>
+  <div class="brand-btn inactive" data-brand="Tommy Hilfiger">Tommy Hilfiger</div>
+  <div class="brand-btn inactive" data-brand="H&M">H&M</div>
+  <div class="brand-btn inactive" data-brand="Levi's">Levi's</div>
+  <div class="brand-btn inactive" data-brand="Zara">Zara</div>
+</div>
+</div>
+</div>
 
-  <main>
-    <div class="card" id="card" role="region" aria-label="Article">
-      <div class="media"><img id="item-img" src="" alt="article"></div>
-      <div class="info">
-        <h2 id="item-title"></h2>
-        <p id="item-brand"></p>
-        <p id="item-size"></p>
-        <p id="item-condition"></p>
-        <div class="price" id="item-price"></div>
-      </div>
-    </div>
+<button id="best-btn">☹ Meilleurs articles</button>
 
-    <div class="btns">
-      <button class="btn skip" id="skip-btn">⏭ Passer</button>
-      <button class="btn fav" id="favorite-btn" style="display:none">❤️ Favoris</button>
-      <button class="btn vinted" id="vinted-btn">🛍 Voir sur Vinted</button>
-    </div>
-  </main>
+<main>
+<div class="card" id="card">
+<img id="item-img" src="" alt="Article">
+<div class="info">
+<h2 id="item-title"></h2>
+<p id="item-brand"></p>
+<p id="item-size"></p>
+<p id="item-condition"></p>
+<div class="price" id="item-price"></div>
+</div>
+</div>
+<div class="btns">
+<button id="skip-btn">⏭ Passer</button>
+<button id="favorite-btn">❤️ Favoris</button>
+<button id="vinted-btn">🛍 Voir sur Vinted</button>
+</div>
+</main>
 
-  <!-- compact popups -->
-  <div id="history-popup" class="popup" style="top:90px"></div>
-  <div id="favorites-popup" class="popup" style="top:90px"></div>
-  <div id="best-popup" class="popup" style="top:90px"></div>
+<div id="vip-popup" class="popup"></div>
+<div id="history-popup" class="popup"></div>
+<div id="favorites-popup" class="popup"></div>
+<div id="best-popup" class="popup"></div>
 
-  <!-- payment bottom sheet -->
-  <div id="payment-sheet" role="dialog" aria-modal="true">
-    <h4>💳 Devenir VIP</h4>
-    <p><strong>Prix :</strong> 9,99€ / mois</p>
-    <p style="color:var(--muted);font-size:13px;margin:6px 0">Fonctionnalités : Favoris, Historique, Notifications meilleurs articles, Marques favorites filtrables.</p>
-    <div style="display:flex;gap:8px" class="pay-actions">
-      <button class="pay-btn paypal" id="pay-paypal">Payer (PayPal)</button>
-      <button class="pay-btn cancel" id="pay-cancel">Annuler</button>
-    </div>
-  </div>
+<script>
+// Articles exemple
+const items = [
+{title:"Sweat Nike Tech", brand:"Nike", size:"M", condition:"Très bon état", price:"45€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+{title:"T-shirt Gucci", brand:"Gucci", size:"L", condition:"Neuf", price:"150€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+{title:"Jean Levi's", brand:"Levi's", size:"42", condition:"Bon état", price:"55€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+{title:"Veste Moncler", brand:"Moncler", size:"S", condition:"Très bon état", price:"250€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"}
+];
 
-  <!-- floating heart (created dynamically) -->
-  <script>
-  // --- données de démonstration ---
-  const items = [
-    {title:"Sweat Nike Tech", brand:"Nike", size:"M", condition:"Très bon état", price:"45€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/2913/2913461.png"},
-    {title:"T-shirt Adidas", brand:"Adidas", size:"L", condition:"Neuf", price:"60€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/2913/2913461.png"},
-    {title:"Veste Moncler", brand:"Moncler", size:"S", condition:"Très bon état", price:"300€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/2913/2913461.png"},
-    {title:"Jean Ralph Lauren", brand:"Ralph Lauren", size:"42", condition:"Bon état", price:"90€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/2913/2913461.png"},
-  ];
+let index=0, isVIP=false, history=[], favorites=[], notifBest=false, bestArticles=[], favBrands=[];
 
-  let index = 0;
-  let isVIP = false;
-  let history = [], favorites = [], bestArticles = [];
-  let favBrands = []; // marques activées
-  let notifBest = false;
-
-  // --- éléments DOM ---
-  const settingsToggle = document.getElementById('settings-toggle');
-  const settings = document.getElementById('settings');
-  const darkToggle = document.getElementById('darkToggle');
-  const vipBtn = document.getElementById('vip-btn');
-  const favViewBtn = document.getElementById('favorites-view');
-  const histViewBtn = document.getElementById('history-view');
-  const notifLabel = document.getElementById('notif-label');
-  const favBrandsGrid = document.getElementById('fav-brands');
-  const brandCells = Array.from(document.querySelectorAll('.brand-cell'));
-
-  const itemImg = document.getElementById('item-img');
-  const itemTitle = document.getElementById('item-title');
-  const itemBrand = document.getElementById('item-brand');
-  const itemSize = document.getElementById('item-size');
-  const itemCondition = document.getElementById('item-condition');
-  const itemPrice = document.getElementById('item-price');
-
-  const card = document.getElementById('card');
-  const skipBtn = document.getElementById('skip-btn');
-  const favBtn = document.getElementById('favorite-btn');
-  const vintedBtn = document.getElementById('vinted-btn');
-
-  const bestBtn = document.getElementById('best-btn');
-  const bestPopup = document.getElementById('best-popup');
-  const historyPopup = document.getElementById('history-popup');
-  const favoritesPopup = document.getElementById('favorites-popup');
-
-  const paymentSheet = document.getElementById('payment-sheet');
-  const payPaypal = document.getElementById('pay-paypal');
-  const payCancel = document.getElementById('pay-cancel');
-
-  // --- affichage article ---
-  function showItem(opts={animate:true}){
-    const item = items[index];
-    // filter by favBrands if VIP and some brands selected
-    if(isVIP && favBrands.length>0 && !favBrands.includes(item.brand)){
-      index = (index+1) % items.length;
-      showItem(opts); return;
-    }
-    if(opts.animate){
-      card.classList.add('zoom');
-      setTimeout(()=>card.classList.remove('zoom'),300);
-    }
-    itemImg.src = item.image;
-    itemTitle.textContent = item.title;
-    itemBrand.textContent = "🏷 " + item.brand;
-    itemSize.textContent = "📏 " + item.size;
-    itemCondition.textContent = "🔹 " + item.condition;
-    itemPrice.textContent = "💰 " + item.price;
-    // show/hide favorite control
-    favBtn.style.display = isVIP ? 'inline-block' : 'none';
-    bestBtn.style.display = (isVIP && bestArticles.length>0) ? 'block' : 'none';
+function showItem(){
+  const item = items[index];
+  if(isVIP && favBrands.length>0 && !favBrands.includes(item.brand)){
+    index=(index+1)%items.length; showItem(); return;
   }
+  document.getElementById("item-img").src=item.image;
+  document.getElementById("item-title").textContent=item.title;
+  document.getElementById("item-brand").textContent="Marque: "+item.brand;
+  document.getElementById("item-size").textContent="Taille: "+item.size;
+  document.getElementById("item-condition").textContent="État: "+item.condition;
+  document.getElementById("item-price").textContent=item.price;
+  document.getElementById("vinted-btn").onclick=()=>window.open(item.link,"_blank");
+  document.getElementById("favorite-btn").style.display=isVIP?"inline-block":"none";
+  document.getElementById("best-btn").style.display=(isVIP && bestArticles.length>0)?"block":"none";
+}
 
-  // --- settings toggle ---
-  settingsToggle.addEventListener('click', ()=> settings.style.display = settings.style.display === 'block' ? 'none' : 'block');
+// VIP activation
+document.getElementById("vip-btn").addEventListener("click",()=>{
+  const popup=document.getElementById("vip-popup");
+  popup.innerHTML=`<span class="popup-close">✖</span>
+  <h4>💎 Devenir VIP - 9.99€/mois</h4>
+  <ul>
+  <li>Thème personnalisé 🎨</li>
+  <li>Favoris sur articles ❤️</li>
+  <li>Marques favorites filtrables 💖</li>
+  <li>Historique 20 derniers 🕘</li>
+  <li>Notifications meilleurs articles 🔔</li>
+  </ul>
+  <button class="pay-btn">Payer avec PayPal</button>`;
+  popup.style.display="block";
+  popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
+  popup.querySelector(".pay-btn").onclick=()=>{
+    isVIP=true; popup.style.display="none";
+    document.getElementById("vip-btn").textContent="⭐ VIP Actif";
+    document.getElementById("favorites-view").style.display="block";
+    document.getElementById("history-view").style.display="block";
+    document.getElementById("notif-label").style.display="block";
+    document.getElementById("fav-brands").style.display="grid";
+    showItem();
+  };
+});
 
-  // --- dark mode ---
-  darkToggle.addEventListener('change', ()=> document.body.classList.toggle('dark-mode'));
+// Skip
+document.getElementById("skip-btn").addEventListener("click",()=>{
+  history.unshift(items[index]);
+  if(history.length>20) history.pop();
+  if(isVIP && notifBest && Math.random()<0.5) bestArticles.unshift(items[index]);
+  if(bestArticles.length>20) bestArticles.pop();
+  index=(index+1)%items.length; showItem();
+});
 
-  // --- VIP flow: open bottom sheet ---
-  vipBtn.addEventListener('click', ()=>{
-    if(isVIP){
-      alert("⭐ Vous êtes déjà VIP");
-      return;
-    }
-    paymentSheet.classList.add('show');
-  });
-  payCancel.addEventListener('click', ()=> paymentSheet.classList.remove('show'));
-  payPaypal.addEventListener('click', ()=>{
-    // simulate payment animation
-    payPaypal.disabled = true;
-    payPaypal.textContent = 'Paiement...';
-    setTimeout(()=>{
-      isVIP = true;
-      paymentSheet.classList.remove('show');
-      payPaypal.disabled = false;
-      payPaypal.textContent = 'Payer (PayPal)';
-      vipBtn.textContent = '⭐ VIP Actif';
-      favViewBtn.style.display = 'block';
-      histViewBtn.style.display = 'block';
-      notifLabel.style.display = 'block';
-      favBrandsGrid.style.display = 'grid';
-      showItem({animate:false});
-    },1100);
-  });
-
-  // --- brand click toggle (no separate button) ---
-  brandCells.forEach(cell=>{
-    cell.addEventListener('click', ()=>{
-      if(!isVIP){ // ignore if not VIP
-        // small shake to indicate locked
-        cell.animate([{transform:'translateY(0)'},{transform:'translateY(-6px)'},{transform:'translateY(0)'}],{duration:260});
-        return;
-      }
-      const brand = cell.dataset.brand;
-      const active = cell.dataset.active === 'true';
-      cell.dataset.active = (!active).toString();
-      if(!active){
-        // activate
-        if(!favBrands.includes(brand)) favBrands.push(brand);
-      } else {
-        // deactivate
-        favBrands = favBrands.filter(b=>b!==brand);
-      }
-      // subtle pulse
-      cell.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:260});
-      showItem();
-    });
-  });
-
-  // --- skip with animation ---
-  skipBtn.addEventListener('click', ()=>{
-    card.classList.add('slide-left');
-    setTimeout(()=>{
-      history.push(items[index]);
-      if(isVIP && notifBest){
-        bestArticles.push(items[index]);
-        bestBtn.classList.add('blink');
-      }
-      index = (index+1) % items.length;
-      card.classList.remove('slide-left');
-      showItem();
-    },380);
-  });
-
-  // --- favorite: add and heart pop ---
-  favBtn.addEventListener('click', ()=>{
-    const it = items[index];
-    if(!favorites.includes(it)) favorites.push(it);
-    // create floating heart
-    const h = document.createElement('div');
-    h.className = 'float-heart'; h.textContent = '💖';
-    document.body.appendChild(h);
-    setTimeout(()=> h.remove(),900);
-  });
-
-  // --- open vinted link ---
-  vintedBtn.addEventListener('click', ()=> window.open(items[index].link,'_blank'));
-
-  // --- favorites popup (compact) ---
-  favViewBtn.addEventListener('click', ()=>{
-    if(!isVIP){ alert('VIP uniquement'); return; }
-    const popup = favoritesPopup;
-    popup.innerHTML = '<span class="popup-close">✖</span><h4>❤️ Favoris</h4><div class="item-list"></div>';
-    const list = popup.querySelector('.item-list');
-    (favorites.slice(-3).reverse()).forEach(it=>{
-      const row = document.createElement('div'); row.className='item-row';
-      row.innerHTML = `<div class="left"><img src="${it.image}" alt=""><div style="font-size:13px">${it.title}<br><small style="color:var(--muted)">${it.price}</small></div></div><button onclick="window.open('${it.link}','_blank')">Voir</button>`;
-      list.appendChild(row);
-    });
-    popup.style.display='block';
-    popup.querySelector('.popup-close').onclick = ()=> popup.style.display='none';
-  });
-
-  // --- history popup ---
-  histViewBtn.addEventListener('click', ()=>{
-    if(!isVIP){ alert('VIP uniquement'); return; }
-    const popup = historyPopup;
-    popup.innerHTML = '<span class="popup-close">✖</span><h4>🕘 Historique</h4><div class="item-list"></div>';
-    const list = popup.querySelector('.item-list');
-    (history.slice(-3).reverse()).forEach(it=>{
-      const row = document.createElement('div'); row.className='item-row';
-      row.innerHTML = `<div class="left"><img src="${it.image}" alt=""><div style="font-size:13px">${it.title}<br><small style="color:var(--muted)">${it.price}</small></div></div><button onclick="window.open('${it.link}','_blank')">Voir</button>`;
-      list.appendChild(row);
-    });
-    popup.style.display='block';
-    popup.querySelector('.popup-close').onclick = ()=> popup.style.display='none';
-  });
-
-  // --- best articles popup ---
-  bestBtn.addEventListener('click', ()=>{
-    if(!isVIP){ alert('VIP uniquement'); return; }
-    if(bestArticles.length === 0){ alert('😔 Pas de meilleurs articles'); return; }
-    bestBtn.classList.remove('blink');
-    const popup = bestPopup;
-    popup.innerHTML = '<span class="popup-close">✖</span><h4>❗ Meilleurs articles</h4><div class="item-list"></div>';
-    const list = popup.querySelector('.item-list');
-    (bestArticles.slice(-3).reverse()).forEach(it=>{
-      const row = document.createElement('div'); row.className='item-row';
-      row.innerHTML = `<div class="left"><img src="${it.image}" alt=""><div style="font-size:13px">${it.title}<br><small style="color:var(--muted)">${it.price}</small></div></div><button onclick="window.open('${it.link}','_blank')">Voir</button>`;
-      list.appendChild(row);
-    });
-    // reset bestArticles after view
-    bestArticles.length = 0;
-    popup.style.display='block';
-    popup.querySelector('.popup-close').onclick = ()=> popup.style.display='none';
-  });
-
-  // --- notification toggle ---
-  document.getElementById('notif-best').addEventListener('change', e=> notifBest = e.target.checked);
-
-  // initial show
+// Favoris
+document.getElementById("favorite-btn").addEventListener("click",()=>{
+  if(!favorites.includes(items[index])) favorites.unshift(items[index]);
+  if(favorites.length>20) favorites.pop();
   showItem();
-  // hide settings when click outside
-  document.addEventListener('click', (e)=>{
-    if(!settings.contains(e.target) && e.target !== settingsToggle) settings.style.display='none';
-  });
-  // small keyboard next for testing (arrow right)
-  document.addEventListener('keydown',(e)=>{ if(e.key==='ArrowRight') skipBtn.click(); if(e.key==='f') favBtn.click(); });
+});
 
-  // expose some state for debugging (optional)
-  window._demo = { items, get state(){ return {isVIP,favBrands,favorites,history,bestArticles} } };
-  </script>
+// Historique popup
+document.getElementById("history-view").addEventListener("click",()=>{
+  if(!isVIP) return;
+  const popup=document.getElementById("history-popup");
+  popup.innerHTML='<span class="popup-close">✖</span><h4>🕘 Historique</h4><div class="item-list"></div>';
+  const list=popup.querySelector(".item-list");
+  history.forEach(it=>{
+    const div=document.createElement("div");
+    div.innerHTML=`<img src="${it.image}"/><div>${it.title}<br>${it.price}<br><button onclick="window.open('${it.link}','_blank')">Voir sur Vinted</button></div>`;
+    list.appendChild(div);
+  });
+  popup.style.display="block";
+  popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
+});
+
+// Favoris popup
+document.getElementById("favorites-view").addEventListener("click",()=>{
+  if(!isVIP) return;
+  const popup=document.getElementById("favorites-popup");
+  popup.innerHTML='<span class="popup-close">✖</span><h4>❤️ Favoris</h4><div class="item-list"></div>';
+  const list=popup.querySelector(".item-list");
+  favorites.forEach(it=>{
+    const div=document.createElement("div");
+    div.innerHTML=`<img src="${it.image}"/><div>${it.title}<br>${it.price}<br><button onclick="window.open('${it.link}','_blank')">Voir sur Vinted</button></div>`;
+    list.appendChild(div);
+  });
+  popup.style.display="block";
+  popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
+});
+
+// Notification meilleurs articles
+document.getElementById("notif-best").addEventListener("change",()=>{
+  notifBest=document.getElementById("notif-best").checked;
+});
+
+// Marques favorites
+document.querySelectorAll(".brand-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    if(!isVIP) return;
+    if(btn.classList.contains("active")){ btn.classList.remove("active"); btn.classList.add("inactive"); }
+    else { btn.classList.remove("inactive"); btn.classList.add("active"); }
+    favBrands=Array.from(document.querySelectorAll(".brand-btn.active")).map(b=>b.dataset.brand);
+    showItem();
+  });
+});
+
+// Dark mode
+document.getElementById("darkToggle").addEventListener("change",()=>document.body.classList.toggle("dark-mode"));
+// Settings toggle
+document.getElementById("settings-toggle").addEventListener("click",()=>{
+  const s=document.getElementById("settings"); s.style.display=(s.style.display==="block"?"none":"block");
+});
+
+showItem();
+</script>
 </body>
 </html>
