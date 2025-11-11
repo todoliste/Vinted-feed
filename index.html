@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vinted VIP</title>
+<title>Vinted VIP Demo</title>
 <style>
 body{margin:0;font-family:sans-serif;background:#f5f5f5;color:#333;display:flex;flex-direction:column;align-items:center;min-height:100vh;transition:0.3s;}
 body.dark{background:#121212;color:#fff;}
@@ -51,12 +51,12 @@ body.dark .popup{background:#1f1f1f;color:#fff;}
 
 <div id="settings">
 <h4>⚙️ Paramètres</h4>
+<label><input type="checkbox" id="darkToggle"> 🌙 Mode sombre</label>
 <div class="vip-section">
-<button id="vip-btn">💎 Activer VIP</button>
+<button id="vip-btn">💎 Devenir VIP</button>
 <button id="favorites-view">❤️ Favoris</button>
 <button id="history-view">🕘 Historique</button>
 <label id="notif-label" style="display:none;">🔔 <input type="checkbox" id="notif-best"> Meilleurs articles</label>
-<label><input type="checkbox" id="darkToggle"> 🌙 Mode sombre</label>
 <div id="fav-brands">
 <label><input type="checkbox" class="brand-check" value="Nike">Nike</label>
 <label><input type="checkbox" class="brand-check" value="Dior">Dior</label>
@@ -67,9 +67,6 @@ body.dark .popup{background:#1f1f1f;color:#fff;}
 <label><input type="checkbox" class="brand-check" value="Puma">Puma</label>
 <label><input type="checkbox" class="brand-check" value="H&M">H&M</label>
 <label><input type="checkbox" class="brand-check" value="Louis Vuitton">LV</label>
-<label><input type="checkbox" class="brand-check" value="Chanel">Chanel</label>
-<label><input type="checkbox" class="brand-check" value="Fendi">Fendi</label>
-<label><input type="checkbox" class="brand-check" value="Supreme">Supreme</label>
 </div>
 </div>
 </div>
@@ -94,23 +91,22 @@ body.dark .popup{background:#1f1f1f;color:#fff;}
 </div>
 </main>
 
+<div id="vip-popup" class="popup"></div>
 <div id="history-popup" class="popup"></div>
 <div id="favorites-popup" class="popup"></div>
 <div id="best-popup" class="popup"></div>
 
 <script>
-const items=[
-{title:"Sweat Nike Tech", brand:"Nike", size:"M", condition:"Très bon état", price:"45€", link:"https://www.vinted.fr", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
-{title:"T-shirt Dior", brand:"Dior", size:"L", condition:"Neuf", price:"90€", link:"https://www.vinted.fr", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
-{title:"Jean Levi's 501", brand:"Levi's", size:"42", condition:"Bon état", price:"55€", link:"https://www.vinted.fr", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
-{title:"Veste Zara", brand:"Zara", size:"S", condition:"Très bon état", price:"35€", link:"https://www.vinted.fr", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"}
+// ✅ Exemple articles
+const items = [
+{title:"Sweat Nike Tech", brand:"Nike", size:"M", condition:"Très bon état", price:"45€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"},
+{title:"T-shirt Dior", brand:"Dior", size:"L", condition:"Neuf", price:"90€", link:"#", image:"https://cdn-icons-png.flaticon.com/512/925/925123.png"}
 ];
 
 let index=0,isVIP=false,history=[],favorites=[],notifBest=false,bestArticles=[],favBrands=[];
 
 function showItem(){
 const item=items[index];
-if(isVIP && favBrands.length>0 && !favBrands.includes(item.brand)){index=(index+1)%items.length;showItem();return;}
 document.getElementById("item-img").src=item.image;
 document.getElementById("item-title").textContent=item.title;
 document.getElementById("item-brand").textContent="Marque : "+item.brand;
@@ -123,13 +119,22 @@ document.getElementById("best-btn").style.display=(isVIP && bestArticles.length>
 }
 
 document.getElementById("vip-btn").addEventListener("click",()=>{
+if(!isVIP){
+const popup=document.getElementById("vip-popup");
+popup.innerHTML='<span class="popup-close">✖</span><h4>💎 Devenir VIP</h4><p>Prix : 9,99€/mois</p><p>Fonctionnalités VIP :</p><ul><li>Favoris</li><li>Historique</li><li>Notifications meilleurs articles</li><li>Marques favorites</li></ul><button id="pay-btn">💳 Payer avec PayPal</button>';
+popup.style.display="block";
+popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
+document.getElementById("pay-btn").onclick=()=>{
 isVIP=true;
 document.getElementById("vip-btn").textContent="⭐ VIP Actif";
 document.getElementById("favorites-view").style.display="block";
 document.getElementById("history-view").style.display="block";
 document.getElementById("notif-label").style.display="block";
 document.getElementById("fav-brands").style.display="grid";
+popup.style.display="none";
 showItem();
+};
+} else {alert("Vous êtes déjà VIP !");}
 });
 
 document.getElementById("skip-btn").addEventListener("click",()=>{
@@ -144,6 +149,7 @@ showItem();
 });
 
 document.getElementById("history-view").addEventListener("click",()=>{
+if(!isVIP){alert("Fonctionnalité VIP uniquement");return;}
 const popup=document.getElementById("history-popup");
 popup.innerHTML='<span class="popup-close">✖</span><h4>🕘 Historique</h4><div class="item-list"></div>';
 const list=popup.querySelector(".item-list");
@@ -157,6 +163,7 @@ popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
 });
 
 document.getElementById("favorites-view").addEventListener("click",()=>{
+if(!isVIP){alert("Fonctionnalité VIP uniquement");return;}
 const popup=document.getElementById("favorites-popup");
 popup.innerHTML='<span class="popup-close">✖</span><h4>❤️ Favoris</h4><div class="item-list"></div>';
 const list=popup.querySelector(".item-list");
@@ -170,6 +177,7 @@ popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
 });
 
 document.getElementById("best-btn").addEventListener("click",()=>{
+if(!isVIP){alert("Fonctionnalité VIP uniquement");return;}
 if(bestArticles.length===0){alert("😔 Pas de meilleurs articles");return;}
 const popup=document.getElementById("best-popup");
 popup.innerHTML='<span class="popup-close">✖</span><h4>❗ Meilleurs articles</h4><div class="item-list"></div>';
@@ -185,18 +193,15 @@ popup.querySelector(".popup-close").onclick=()=>popup.style.display="none";
 });
 
 document.getElementById("darkToggle").addEventListener("change",()=>document.body.classList.toggle("dark"));
-
 document.getElementById("settings-toggle").addEventListener("click",()=>{
 const s=document.getElementById("settings");s.style.display=(s.style.display==="block"?"none":"block");
 });
-
 document.querySelectorAll(".brand-check").forEach(cb=>{
 cb.addEventListener("change",()=>{
 favBrands=Array.from(document.querySelectorAll(".brand-check")).filter(b=>b.checked).map(b=>b.value);
 showItem();
 });
 });
-
 document.getElementById("notif-best").addEventListener("change",()=>{
 notifBest=document.getElementById("notif-best").checked;
 });
